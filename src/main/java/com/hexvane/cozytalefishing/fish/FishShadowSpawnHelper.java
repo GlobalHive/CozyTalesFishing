@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
+import com.hypixel.hytale.server.core.asset.type.environment.config.Environment;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -391,18 +392,56 @@ public final class FishShadowSpawnHelper {
     }
 
     static boolean isUnderground(@Nonnull World world, int x, int z, int waterSurfaceBlockY, int coverScanDepth) {
-        WorldChunk chunk = world.getChunkIfLoaded(ChunkUtil.indexChunkFromBlock(x, z));
-        if (chunk == null) {
-            return false;
+        return isUnderground(world, x, z, waterSurfaceBlockY, coverScanDepth, -1);
+    }
+
+    static boolean isUnderground(
+        @Nonnull World world,
+        int x,
+        int z,
+        int waterSurfaceBlockY,
+        int coverScanDepth,
+        int environmentIndex
+    ) {
+        if (hasSolidCoverAbove(world, x, z, waterSurfaceBlockY)) {
+            return true;
         }
-        int scanTop = Math.min(waterSurfaceBlockY + coverScanDepth, 320);
-        for (int y = waterSurfaceBlockY + 1; y <= scanTop; y++) {
-            int blockId = chunk.getBlock(x, y, z);
-            if (blockId != BlockType.EMPTY_ID && !FishFluidHelper.isFishableFluidAt(world, x, y, z)) {
+        return environmentIndex >= 0 && isCaveEnvironment(environmentIndex);
+    }
+
+    /** True when any solid block exists above the water surface in this column (cavern ceiling, etc.). */
+    private static boolean hasSolidCoverAbove(
+        @Nonnull World world,
+        int x,
+        int z,
+        int waterSurfaceBlockY
+    ) {
+        for (int y = waterSurfaceBlockY + 1; y <= 320; y++) {
+            if (isSolidAt(world, x, y, z)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isCaveEnvironment(int environmentIndex) {
+        Environment environment = Environment.getAssetMap().getAsset(environmentIndex);
+        return environment != null
+            && environment.getId() != null
+            && environment.getId().contains("_Caves");
+    }
+
+    private static int resolveEnvironmentIndex(@Nonnull World world, int blockX, int blockY, int blockZ) {
+        long chunkIndex = ChunkUtil.indexChunkFromBlock(blockX, blockZ);
+        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
+        if (chunkRef == null) {
+            return 0;
+        }
+        var worldChunk = world.getChunkStore().getStore().getComponent(chunkRef, WorldChunk.getComponentType());
+        if (worldChunk == null) {
+            return 0;
+        }
+        return worldChunk.getBlockChunk().getEnvironment(blockX, blockY, blockZ);
     }
 
     public static boolean matchesSpawnEnvironment(
@@ -530,7 +569,9 @@ public final class FishShadowSpawnHelper {
         @Nullable FishingSpawnRegionContext regionContext
     ) {
         FishingModConfig config = FishingModConfig.get();
-        boolean underground = isUnderground(world, x, z, surfaceY, config.getUndergroundSurfaceOffset());
+        int environmentIndex = resolveEnvironmentIndex(world, x, surfaceY, z);
+        boolean underground =
+            isUnderground(world, x, z, surfaceY, config.getUndergroundSurfaceOffset(), environmentIndex);
 
         String zonePrefix = regionContext != null && regionContext.getEffectiveZonePrefix() != null
             ? regionContext.getEffectiveZonePrefix()
@@ -581,9 +622,20 @@ public final class FishShadowSpawnHelper {
         if (range == null || range.length < 2) {
             return true;
         }
-        double minTime = range[0] / (double) WorldTimeResource.HOURS_PER_DAY;
-        double maxTime = range[1] / (double) WorldTimeResource.HOURS_PER_DAY;
-        return worldTime.isScaledDayTimeWithinRange(minTime, maxTime);
+        // Match vanilla HourRangeTriggerCondition: species JSON hours are clock hours (getCurrentHour),
+        // not scaled day/night timeline hours (isScaledDayTimeWithinRange).
+        int minHour = normalizeHour(range[0]);
+        int maxHour = normalizeHour(range[1]);
+        int currentHour = worldTime.getCurrentHour();
+        if (minHour > maxHour) {
+            return currentHour >= minHour || currentHour < maxHour;
+        }
+        return currentHour >= minHour && currentHour < maxHour;
+    }
+
+    private static int normalizeHour(float hour) {
+        int normalized = ((int) Math.floor(hour)) % WorldTimeResource.HOURS_PER_DAY;
+        return normalized < 0 ? normalized + WorldTimeResource.HOURS_PER_DAY : normalized;
     }
 
     public static boolean matchesWeather(@Nonnull FishSpeciesAsset species, int currentWeatherIndex) {

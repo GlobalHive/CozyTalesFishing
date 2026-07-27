@@ -1,5 +1,5 @@
 {
-  "ShadowType": "Tiny",
+  "ShadowType": "Medium",
   "ItemId": "Fish_Frostgill_Item",
   "AquariumSize": "Tall3x2x2",
   "AquariumDisplayOffset": [-0.1, -0.1, 0],
@@ -14,9 +14,9 @@
   },
   "VisionRange": 3.5,
   "VisionAngleDegrees": 95,
-  "PokeReachBlocks": 0.2,
-  "SizeRangeCm": [8, 18],
-  "ShadowScaleRange": [0.7, 0.95],
+  "PokeReachBlocks": 0.35,
+  "SizeRangeCm": [30, 75],
+  "ShadowScaleRange": [0.95, 1.25],
   "SwimSpeed": 1,
   "FleePlayerRange": 3.5,
   "FightSwimSpeed": 1.2

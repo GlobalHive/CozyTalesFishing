@@ -1,7 +1,11 @@
 package com.hexvane.cozytalefishing.journal;
 
+import com.hexvane.cozytalefishing.fish.FishRarity;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
+import com.hypixel.hytale.server.core.asset.type.item.config.ItemQuality;
+import com.hypixel.hytale.server.core.asset.util.ColorParseUtil;
+import com.hypixel.hytale.server.core.ui.PatchStyle;
 import com.hypixel.hytale.server.core.ui.Value;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import javax.annotation.Nonnull;
@@ -9,6 +13,10 @@ import javax.annotation.Nullable;
 
 public final class FishingJournalUi {
     private static final Value<String> DEFAULT_TEXT_TOOLTIP_STYLE = Value.ref("Common.ui", "DefaultTextTooltipStyle");
+    /** Matches vanilla ingredient/quality slot 9-slice border (@2x 148px textures). */
+    private static final int QUALITY_SLOT_BORDER = 24;
+    /** Custom UI paths resolve from the Custom root, not common-asset UI/ prefixes. */
+    private static final String QUALITY_SLOT_UI_ROOT = "CozyTalesFishing/ItemQualities/Slots/";
 
     private FishingJournalUi() {}
 
@@ -54,6 +62,74 @@ public final class FishingJournalUi {
         }
         Item item = Item.getAssetMap().getAsset(itemId.trim());
         commandBuilder.set(assetImageSelector + ".AssetPath", ItemAssetImagePath.forItem(item, itemId));
+    }
+
+    public static void applyQualityBackground(
+        @Nonnull UICommandBuilder commandBuilder,
+        @Nonnull String groupSelector,
+        @Nonnull FishRarity rarity
+    ) {
+        commandBuilder.setObject(groupSelector + ".Background", qualitySlotBackground(qualityFor(rarity)));
+    }
+
+    public static void applyRarityLabel(
+        @Nonnull UICommandBuilder commandBuilder,
+        @Nonnull String labelSelector,
+        @Nonnull FishRarity rarity
+    ) {
+        ItemQuality quality = qualityFor(rarity);
+        commandBuilder.set(labelSelector + ".TextSpans", rarityMessage(quality));
+        commandBuilder.set(labelSelector + ".Style.TextColor", ColorParseUtil.colorToHexString(quality.getTextColor()));
+    }
+
+    @Nonnull
+    private static ItemQuality qualityFor(@Nonnull FishRarity rarity) {
+        ItemQuality quality = ItemQuality.getAssetMap().getAsset(rarity.name());
+        return quality != null ? quality : ItemQuality.DEFAULT_ITEM_QUALITY;
+    }
+
+    @Nonnull
+    private static Message rarityMessage(@Nonnull ItemQuality quality) {
+        String localizationKey = quality.getLocalizationKey();
+        if (localizationKey != null && !localizationKey.isBlank()) {
+            return Message.translation(localizationKey);
+        }
+        return Message.raw(quality.getId());
+    }
+
+    @Nonnull
+    private static PatchStyle qualitySlotBackground(@Nonnull ItemQuality quality) {
+        return new PatchStyle()
+            .setTexturePath(Value.of(qualitySlotUiTexturePath(quality.getSlotTexture())))
+            .setBorder(Value.of(QUALITY_SLOT_BORDER));
+    }
+
+    @Nonnull
+    private static String qualitySlotUiTexturePath(@Nullable String slotTexture) {
+        if (slotTexture == null || slotTexture.isBlank()) {
+            slotTexture = ItemQuality.DEFAULT_ITEM_QUALITY.getSlotTexture();
+        }
+
+        String normalized = slotTexture.trim().replace('\\', '/');
+        String fileName = normalized.substring(normalized.lastIndexOf('/') + 1);
+
+        // ItemQuality slot textures live outside Custom/; ship copies under CozyTalesFishing/ItemQualities/.
+        if (normalized.startsWith("UI/ItemQualities/")) {
+            fileName = normalized.substring("UI/ItemQualities/".length());
+        } else if (normalized.startsWith("ItemQualities/")) {
+            fileName = normalized.substring("ItemQualities/".length());
+        }
+
+        if (fileName.startsWith("Slots/")) {
+            fileName = fileName.substring("Slots/".length());
+        }
+
+        // Engine resolves @2x variants automatically; paths must omit the suffix.
+        if (fileName.contains("@2x.png")) {
+            fileName = fileName.replace("@2x.png", ".png");
+        }
+
+        return QUALITY_SLOT_UI_ROOT + fileName;
     }
 
     public static void setGridCellTooltip(

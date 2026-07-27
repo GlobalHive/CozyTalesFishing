@@ -23,14 +23,12 @@ Group #FishingJournalFishCell {
       LayoutMode: Full;
       Anchor: (Full: 0);
       Padding: (Full: 4);
-      Background: #141c28;
       HitTestVisible: false;
 
       Group #IconInner {
         LayoutMode: Full;
         Anchor: (Full: 0);
         Padding: (Full: 3);
-        Background: #1c2230;
         HitTestVisible: false;
 
         AssetImage #FishIcon {

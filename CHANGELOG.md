@@ -1,6 +1,26 @@
 # Changelog
 
-## [1.1.0] - Unreleased
+## [1.2.0] - 7/27/2026
+
+### Added
+
+- **Fish Finder location details** — See zone, environment, depth, water type, time, and weather for the water you are scanning.
+- **Rarity frames in the journal and Fish Finder** — Fish entries now show colored rarity backgrounds that match their tier.
+
+### Fixed
+
+- **Catch rarity** — Caught fish now show the correct rarity on the item.
+- **Underground fishing** — Cave and underground water is detected correctly, including in large caverns.
+- **Time-of-day spawns** — Night and day fish now match the clock shown in-game (for example, night fish appear at 18:00, not later).
+- **Fish Finder crash** — Fixed a crash when opening the Fish Finder in some locations.
+- **Frostgill shadow** — Frostgill now uses a properly sized shadow for a large fish.
+
+### Changed
+
+- **Coastal ocean spawns** — Zone 2 shores have fewer overlapping species, making rare catches like Man o' War easier to find.
+- **Snapjaw** — Can appear in any underground Zone 3 water at night, not just ponds.
+
+## [1.1.0] - 7/22/2026
 
 ### Added
 

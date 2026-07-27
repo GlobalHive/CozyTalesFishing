@@ -305,7 +305,8 @@ public final class FishSpawnRulesEvaluator {
                 context.blockX(),
                 context.blockZ(),
                 context.surfaceY(),
-                context.config().getUndergroundSurfaceOffset()
+                context.config().getUndergroundSurfaceOffset(),
+                context.environmentIndex()
             );
         boolean wantsUnderground = rule.getOnly() != null && rule.getOnly();
         boolean matched = wantsUnderground == underground;

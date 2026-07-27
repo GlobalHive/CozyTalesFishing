@@ -169,7 +169,8 @@ public final class SpawnProbeService {
                 blockX,
                 blockZ,
                 surfaceY,
-                config.getUndergroundSurfaceOffset()
+                config.getUndergroundSurfaceOffset(),
+                environmentIndex
             );
 
         FishShadowSpawnHelper.SpawnConditions spawnConditions =

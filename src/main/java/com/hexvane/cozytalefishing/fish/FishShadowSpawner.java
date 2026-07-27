@@ -180,7 +180,9 @@ public final class FishShadowSpawner {
 
                             column.surfaceY(),
 
-                            config.getUndergroundSurfaceOffset()
+                            config.getUndergroundSurfaceOffset(),
+
+                            environmentIndex
 
                         ),
 

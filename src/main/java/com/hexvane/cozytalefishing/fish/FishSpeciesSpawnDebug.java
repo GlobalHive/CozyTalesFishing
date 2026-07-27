@@ -114,7 +114,8 @@ public final class FishSpeciesSpawnDebug {
                     blockX,
                     blockZ,
                     surfaceY,
-                    FishingModConfig.get().getUndergroundSurfaceOffset()
+                    FishingModConfig.get().getUndergroundSurfaceOffset(),
+                    catchEnvironmentIndex
                 );
 
         text.append('\n');

@@ -1,5 +1,6 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.asset.type.item.config.ItemQuality;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
@@ -8,6 +9,9 @@ import javax.annotation.Nullable;
 
 /** Builds fish item stacks whose vanilla quality tier matches species rarity. */
 public final class FishItemStackFactory {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static final String GENERATED_STATE_ID_PREFIX = "*";
+
     private FishItemStackFactory() {}
 
     @Nonnull
@@ -42,7 +46,33 @@ public final class FishItemStackFactory {
             return stack.withState(targetQuality);
         }
 
+        String generatedStateId = GENERATED_STATE_ID_PREFIX + itemId + "_State_" + targetQuality;
+        if (Item.getAssetMap().getAsset(generatedStateId) != null) {
+            stack = new ItemStack(generatedStateId, 1);
+        }
+
+        warnIfQualityMismatch(itemId, targetQuality, stack);
         return stack;
+    }
+
+    private static void warnIfQualityMismatch(
+        @Nonnull String itemId,
+        @Nonnull String targetQuality,
+        @Nonnull ItemStack stack
+    ) {
+        Item resolvedItem = stack.getItem();
+        if (resolvedItem == null) {
+            return;
+        }
+        String resolvedQuality = qualityId(resolvedItem);
+        if (resolvedQuality != null && !resolvedQuality.equalsIgnoreCase(targetQuality)) {
+            LOGGER.atWarning().log(
+                "Fish item %s resolved to quality %s but species rarity is %s",
+                itemId,
+                resolvedQuality,
+                targetQuality
+            );
+        }
     }
 
     @Nullable

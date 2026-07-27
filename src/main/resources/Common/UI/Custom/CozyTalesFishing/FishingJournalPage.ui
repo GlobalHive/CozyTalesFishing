@@ -167,13 +167,11 @@ $C.@PageOverlay {
                       LayoutMode: Full;
                       Anchor: (Width: @DetailIconSize, Height: @DetailIconSize);
                       Padding: (Full: 4);
-                      Background: #141c28;
 
                       Group {
                         LayoutMode: Full;
                         Anchor: (Full: 0);
                         Padding: (Full: 3);
-                        Background: #1c2230;
 
                         AssetImage #DetailFishIcon {
                           Anchor: (Full: 0);

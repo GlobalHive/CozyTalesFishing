@@ -170,6 +170,7 @@ public final class FishingJournalPage extends CozyInteractiveCustomUIPage<Fishin
             commandBuilder.append(FISH_GRID, "CozyTalesFishing/FishingJournalFishCell.ui");
             commandBuilder.set(cell + " #SelectHilite.Visible", selected);
             FishingJournalUi.setFishIcon(commandBuilder, icon, species.getItemId());
+            FishingJournalUi.applyQualityBackground(commandBuilder, button + " #IconFrame #IconInner", species.getRarity());
             applyGridEntryState(commandBuilder, button, state);
             FishingJournalUi.setGridCellTooltip(
                 commandBuilder,
@@ -734,6 +735,7 @@ public final class FishingJournalPage extends CozyInteractiveCustomUIPage<Fishin
         JournalEntryState state = JournalEntryState.fromRecords(records, species.getId());
         commandBuilder.set(DETAIL_ICON + ".Visible", true);
         FishingJournalUi.setFishIcon(commandBuilder, DETAIL_ICON + " #DetailFishIcon", species.getItemId());
+        FishingJournalUi.applyQualityBackground(commandBuilder, DETAIL_ICON, species.getRarity());
         applyDetailEntryState(commandBuilder, state);
 
         switch (state) {

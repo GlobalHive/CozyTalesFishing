@@ -26,7 +26,13 @@ $C.@PageOverlay {
 
         Label #Subtitle {
           Style: (FontSize: 14, TextColor: #9eb0bc);
-          Anchor: (Bottom: 8);
+          Anchor: (Bottom: 4);
+          Text: "";
+        }
+
+        Label #LocationDetails {
+          Style: (FontSize: 12, TextColor: #7a8f9e, Wrap: true);
+          Anchor: (Bottom: 10, Width: @PanelWidth - 32);
           Text: "";
         }
 

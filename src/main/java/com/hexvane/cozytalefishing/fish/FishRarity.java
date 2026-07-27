@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 public enum FishRarity {
     Common(1.0f),
     Uncommon(0.6f),
-    Rare(0.35f),
+    Rare(0.5f),
     Epic(0.2f),
     Legendary(0.1f);
 

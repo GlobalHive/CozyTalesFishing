@@ -3,16 +3,29 @@ $C = "../Common.ui";
 Group #Row {
   LayoutMode: Left;
   Anchor: (Bottom: 4);
-  Padding: (Full: 8);
+  Padding: (Full: 6);
   Background: PatchStyle(TexturePath: "../Common/Dropdown.png", Border: 16);
 
-  ItemIcon #Icon {
+  Group #IconFrame {
     Anchor: (Width: 40, Height: 40);
+    Padding: (Full: 2);
+
+    AssetImage #Icon {
+      Anchor: (Full: 0);
+    }
   }
 
-  Label #Name {
+  Group #Info {
+    LayoutMode: Top;
     FlexWeight: 1;
-    Padding: (Horizontal: 10, Vertical: 6);
-    Style: (RenderBold: true, FontSize: 14, TextColor: #b7cedd, Wrap: true);
+    Padding: (Horizontal: 10, Vertical: 2);
+
+    Label #Name {
+      Style: (RenderBold: true, FontSize: 14, TextColor: #e8eef2, Wrap: true);
+    }
+
+    Label #Rarity {
+      Style: (FontSize: 12, TextColor: #9eb0bc);
+    }
   }
 }
