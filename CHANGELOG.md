@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - Unreleased
+
+### Added
+
+- **Stormwind Fishmonger** — Stormwind-style variant of the Fisherman's Shop for towns using the Stormwind building set.
+
 ## [1.2.0] - 7/27/2026
 
 ### Added
