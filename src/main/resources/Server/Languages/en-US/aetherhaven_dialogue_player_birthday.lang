@@ -1,0 +1,4 @@
+# Reed Castwell line when he brings the player a birthday gift.
+# Keys must live in this bundle so Aetherhaven's birthday dialogue can find them.
+
+aetherhaven.dialogue.player.birthday.incoming.fisherman=Happy birthday. A little something from the water, before the next storm finds it.

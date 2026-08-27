@@ -1,10 +1,9 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hexvane.cozytalefishing.fishing.FishingDebugLog;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.asset.type.fluid.Fluid;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.chunk.section.FluidSection;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.worldgen.IWorldGen;
@@ -71,8 +70,7 @@ public final class WaterBodyClassifier {
             return cached;
         }
 
-        WorldChunk worldChunk = getWorldChunk(world, blockX, blockZ);
-        if (worldChunk == null) {
+        if (!ChunkSectionBlockUtil.isChunkInMemory(world, blockX, blockZ)) {
             return null;
         }
 
@@ -323,16 +321,6 @@ public final class WaterBodyClassifier {
 
     private static boolean isWaterAt(@Nonnull World world, int x, int y, int z) {
         return FishFluidHelper.isWaterFluidAt(world, x, y, z);
-    }
-
-    @Nullable
-    private static WorldChunk getWorldChunk(@Nonnull World world, int blockX, int blockZ) {
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(blockX, blockZ);
-        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
-        if (chunkRef == null) {
-            return null;
-        }
-        return world.getChunkStore().getStore().getComponent(chunkRef, WorldChunk.getComponentType());
     }
 
     @Nullable

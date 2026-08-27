@@ -1,14 +1,13 @@
 package com.hexvane.cozytalefishing.bench;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.builtin.crafting.component.BenchBlock;
 import com.hypixel.hytale.builtin.crafting.component.CraftingManager;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.protocol.InteractionType;
 import com.hypixel.hytale.protocol.packets.interface_.Page;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
-import com.hypixel.hytale.server.core.asset.type.blocktype.config.RotationTuple;
 import com.hypixel.hytale.server.core.entity.InteractionContext;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -16,8 +15,6 @@ import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.CooldownHandler;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.client.SimpleBlockInteraction;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.BlockComponentChunk;
-import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockSection;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,17 +53,7 @@ public final class OpenFishingBenchInteraction extends SimpleBlockInteraction {
         }
 
         var chunkStore = world.getChunkStore();
-        var chunkRef = chunkStore.getChunkReference(ChunkUtil.indexChunkFromBlock(targetBlock.x, targetBlock.z));
-        if (chunkRef == null || !chunkRef.isValid()) {
-            return;
-        }
-        var blockComponentChunk = chunkStore.getStore().getComponent(chunkRef, BlockComponentChunk.getComponentType());
-        if (blockComponentChunk == null) {
-            return;
-        }
-        var blockEntityRef = blockComponentChunk.getEntityReference(
-            ChunkUtil.indexBlockInColumn(targetBlock.x, targetBlock.y, targetBlock.z)
-        );
+        var blockEntityRef = ChunkSectionBlockUtil.blockEntityRefAt(world, targetBlock.x, targetBlock.y, targetBlock.z);
         if (blockEntityRef == null || !blockEntityRef.isValid()) {
             return;
         }
@@ -75,11 +62,11 @@ public final class OpenFishingBenchInteraction extends SimpleBlockInteraction {
             return;
         }
 
-        BlockType blockType = world.getBlockType(targetBlock.x, targetBlock.y, targetBlock.z);
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, targetBlock.x, targetBlock.y, targetBlock.z);
         if (blockType == null) {
             return;
         }
-        int rotationIndex = resolveRotationIndex(world, targetBlock);
+        int rotationIndex = ChunkSectionBlockUtil.rotationIndex(world, targetBlock.x, targetBlock.y, targetBlock.z);
 
         var benchWindow = new FishingBenchCraftingWindow(
             targetBlock.x,
@@ -114,18 +101,4 @@ public final class OpenFishingBenchInteraction extends SimpleBlockInteraction {
         @Nonnull World world,
         @Nonnull Vector3i targetBlock
     ) {}
-
-    private static int resolveRotationIndex(@Nonnull World world, @Nonnull Vector3i targetBlock) {
-        var sectionRef =
-            world.getChunkStore().getChunkSectionReferenceAtBlock(targetBlock.x, targetBlock.y, targetBlock.z);
-        if (sectionRef == null) {
-            return RotationTuple.NONE_INDEX;
-        }
-        BlockSection blockSection =
-            world.getChunkStore().getStore().getComponent(sectionRef, BlockSection.getComponentType());
-        if (blockSection == null) {
-            return RotationTuple.NONE_INDEX;
-        }
-        return blockSection.getRotationIndex(targetBlock.x, targetBlock.y, targetBlock.z);
-    }
 }

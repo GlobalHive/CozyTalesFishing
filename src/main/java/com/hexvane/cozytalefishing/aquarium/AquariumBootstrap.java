@@ -1,7 +1,6 @@
 package com.hexvane.cozytalefishing.aquarium;
 
 import com.hexvane.cozytalefishing.CozyTalesFishingPlugin;
-import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.event.LoadedAssetsEvent;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
@@ -14,7 +13,7 @@ public final class AquariumBootstrap {
     private AquariumBootstrap() {}
 
     public static void register(@Nonnull CozyTalesFishingPlugin plugin) {
-        AssetRegistry.register(
+        plugin.getAssetRegistry().register(
             HytaleAssetStore.builder(AquariumLayoutAsset.class, new DefaultAssetMap<>())
                 .setPath("CozyTalesFishing/Aquarium/Layouts")
                 .setCodec(AquariumLayoutAsset.CODEC)
@@ -22,7 +21,7 @@ public final class AquariumBootstrap {
                 .build()
         );
 
-        AssetRegistry.register(
+        plugin.getAssetRegistry().register(
             HytaleAssetStore.builder(AquariumDecorationAsset.class, new DefaultAssetMap<>())
                 .setPath("CozyTalesFishing/Aquarium/Decorations")
                 .setCodec(AquariumDecorationAsset.CODEC)

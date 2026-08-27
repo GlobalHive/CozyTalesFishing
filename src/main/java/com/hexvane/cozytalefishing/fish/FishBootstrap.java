@@ -4,7 +4,6 @@ import com.hexvane.cozytalefishing.CozyTalesFishingPlugin;
 import com.hexvane.cozytalefishing.fishing.FishingReelInteraction;
 import com.hexvane.cozytalefishing.treasure.OpenMessageInBottleInteraction;
 import com.hexvane.cozytalefishing.treasure.OpenSunkenTreasureInteraction;
-import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.event.LoadedAssetsEvent;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
@@ -28,7 +27,7 @@ public final class FishBootstrap {
     private FishBootstrap() {}
 
     public static void register(@Nonnull CozyTalesFishingPlugin plugin) {
-        AssetRegistry.register(
+        plugin.getAssetRegistry().register(
             HytaleAssetStore.builder(FishSpeciesAsset.class, new DefaultAssetMap<>())
                 .setPath("CozyTalesFishing/Fish")
                 .setCodec(FishSpeciesAsset.CODEC)
@@ -37,7 +36,7 @@ public final class FishBootstrap {
                 .build()
         );
 
-        AssetRegistry.register(
+        plugin.getAssetRegistry().register(
             HytaleAssetStore.builder(FishableFluidAsset.class, new DefaultAssetMap<>())
                 .setPath("CozyTalesFishing/Config/FishableFluids")
                 .setCodec(FishableFluidAsset.CODEC)
@@ -45,7 +44,7 @@ public final class FishBootstrap {
                 .build()
         );
 
-        AssetRegistry.register(
+        plugin.getAssetRegistry().register(
             HytaleAssetStore.builder(WaterBodyBiomeOverridesAsset.class, new DefaultAssetMap<>())
                 .setPath("CozyTalesFishing/Config/WaterBodyBiomeOverrides")
                 .setCodec(WaterBodyBiomeOverridesAsset.CODEC)

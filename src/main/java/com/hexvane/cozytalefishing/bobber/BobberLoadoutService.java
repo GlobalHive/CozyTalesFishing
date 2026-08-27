@@ -68,6 +68,9 @@ public final class BobberLoadoutService {
         @Nonnull ItemContext bobberContext
     ) {
         ItemStack rodStack = rodContext.getItemStack();
+        if (ItemStack.isEmpty(rodStack)) {
+            return false;
+        }
         int slotCount = getSlotCount(rodStack.getItemId());
         if (slotIndex < 0 || slotIndex >= slotCount) {
             return false;
@@ -112,6 +115,9 @@ public final class BobberLoadoutService {
         @Nonnull ItemContainer returnContainer
     ) {
         ItemStack rodStack = rodContext.getItemStack();
+        if (ItemStack.isEmpty(rodStack)) {
+            return false;
+        }
         int slotCount = getSlotCount(rodStack.getItemId());
         if (slotIndex < 0 || slotIndex >= slotCount) {
             return false;

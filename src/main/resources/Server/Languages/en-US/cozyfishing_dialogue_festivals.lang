@@ -1,0 +1,26 @@
+# Reed Castwell festival greetings. Aetherhaven discovers keys matching
+# *.dialogue.festival.<festivalId>.greeting.fisherman.<index> from any lang pack.
+
+cozyfishing.dialogue.festival.new_life.greeting.fisherman.0=Spring water is waking up. I will watch the lettuce, then check the banks when the seeds settle.
+cozyfishing.dialogue.festival.new_life.greeting.fisherman.1=Life essence in the square, fish in the rivers. Both feel like a second chance after the wreck.
+
+cozyfishing.dialogue.festival.pig_race.greeting.fisherman.0=Pigs on land, fish in water. I will cheer from the fence. My sea legs are not made for a racetrack.
+cozyfishing.dialogue.festival.pig_race.greeting.fisherman.1=If I had to pick, I would bet on the one that looks like it has somewhere to be. Same as a good catch.
+
+cozyfishing.dialogue.festival.tree_climbing.greeting.fisherman.0=I would rather climb a mast than a tree, but I will watch. The pink crystal looks like a lure in the leaves.
+cozyfishing.dialogue.festival.tree_climbing.greeting.fisherman.1=If you fall, laugh and try again. The sea taught me that rushing only snaps the line.
+
+cozyfishing.dialogue.festival.carnival.greeting.fisherman.0=Balloons on the square remind me of floats. I might try a dart if the wind stays kind.
+cozyfishing.dialogue.festival.carnival.greeting.fisherman.1=A carnival is loud, but I like a town that knows how to play. I spent enough quiet days with gulls.
+
+cozyfishing.dialogue.festival.hallows_eve.greeting.fisherman.0=A maze of hedges is kinder than a storm at night. I will watch the lights and keep my boots dry.
+cozyfishing.dialogue.festival.hallows_eve.greeting.fisherman.1=Glowing orbs look a bit like jellyfish. Pretty until they sting. I will stay on the path.
+
+cozyfishing.dialogue.festival.market.greeting.fisherman.0=I brought a little from the shop if the stall needs it. Fresh catch and honest tackle belong on a harvest table.
+cozyfishing.dialogue.festival.market.greeting.fisherman.1=A shared stall is like a shared boat. Everyone puts in what they have, and the town eats well.
+
+cozyfishing.dialogue.festival.snowball.greeting.fisherman.0=Snowballs pack like wet sand. I will throw a few, then find somewhere dry. Castaways learn to mind the cold.
+cozyfishing.dialogue.festival.snowball.greeting.fisherman.1=Grab snow from the piles and join at the merchant. I am on whichever team is not aiming at my hat.
+
+cozyfishing.dialogue.festival.wintertide.greeting.fisherman.0=Wintertide is for giving what the tide left you. Talk to the merchant if you do not know who to find.
+cozyfishing.dialogue.festival.wintertide.greeting.fisherman.1=I packed a little from the wreck stores. A gift from deep water still counts on a snowy square.

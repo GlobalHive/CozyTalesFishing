@@ -1,11 +1,11 @@
 package com.hexvane.cozytalefishing.boat;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.protocol.BlockPosition;
 import com.hypixel.hytale.protocol.GameMode;
@@ -21,7 +21,6 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.CooldownHa
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.client.SimpleBlockInteraction;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,23 +79,13 @@ public final class SpawnFishingBoatInteraction extends SimpleBlockInteraction {
     }
 
     Vector3i targetBlock = new Vector3i(targetBlockPos.x, targetBlockPos.y, targetBlockPos.z);
-    var chunkStore = world.getChunkStore();
-    long chunkIndex = ChunkUtil.indexChunkFromBlock(targetBlock.x, targetBlock.z);
-    var chunkReference = chunkStore.getChunkReference(chunkIndex);
-    if (chunkReference == null || !chunkReference.isValid()) {
+    if (!ChunkSectionBlockUtil.isChunkInMemory(world, targetBlock.x, targetBlock.z)) {
       context.getState().state = InteractionState.Failed;
       super.tick0(firstRun, time, type, context, cooldownHandler);
       return;
     }
 
-    WorldChunk worldChunk = chunkStore.getStore().getComponent(chunkReference, WorldChunk.getComponentType());
-    if (worldChunk == null) {
-      context.getState().state = InteractionState.Failed;
-      super.tick0(firstRun, time, type, context, cooldownHandler);
-      return;
-    }
-
-    int blockId = worldChunk.getBlock(targetBlock);
+    int blockId = ChunkSectionBlockUtil.blockId(world, targetBlock.x, targetBlock.y, targetBlock.z);
     boolean isWaterCell = BoatWaterHelper.isWaterTargetBlock(world, targetBlock);
     if (blockId == BlockType.UNKNOWN_ID || (blockId == BlockType.EMPTY_ID && !isWaterCell)) {
       Vector3i waterTarget = BoatWaterHelper.raycastWaterTarget(world, ref, commandBuffer);

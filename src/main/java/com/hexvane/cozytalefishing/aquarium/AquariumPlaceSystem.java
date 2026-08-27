@@ -1,6 +1,7 @@
 package com.hexvane.cozytalefishing.aquarium;
 
 import com.hexvane.cozytalefishing.fish.AquariumSize;
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -10,7 +11,6 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.modules.block.BlockModule;
-import com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import javax.annotation.Nonnull;
@@ -37,23 +37,21 @@ public final class AquariumPlaceSystem extends RefSystem<ChunkStore> {
         @Nonnull CommandBuffer<ChunkStore> commandBuffer
     ) {
         var info = commandBuffer.getComponent(ref, BlockModule.BlockStateInfo.getComponentType());
-        if (info == null || !info.getChunkRef().isValid()) {
+        if (info == null || !info.getSectionRef().isValid()) {
             return;
         }
 
-        var blockChunk = commandBuffer.getComponent(info.getChunkRef(), BlockChunk.getComponentType());
-        if (blockChunk == null) {
+        Vector3i origin = AquariumService.worldOriginFromBlockInfo(info, commandBuffer);
+        if (origin == null) {
             return;
         }
-
-        Vector3i origin = AquariumService.worldOriginFromBlockInfo(info, blockChunk);
         var world = store.getExternalData().getWorld();
 
         AquariumBlock aquarium = commandBuffer.getComponent(ref, AquariumBlock.getComponentType());
         if (aquarium != null) {
             int rotationIndex = AquariumBlockHelper.rotationIndexAt(world, origin);
 
-            BlockType blockType = world.getBlockType(origin.x, origin.y, origin.z);
+            BlockType blockType = ChunkSectionBlockUtil.blockType(world, origin.x, origin.y, origin.z);
             AquariumSize size =
                 blockType != null ? AquariumConstants.sizeForBlockId(blockType.getId()) : null;
             if (size == null) {

@@ -1,12 +1,11 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -128,16 +127,7 @@ public final class SpawnProbeService {
     }
 
     private static int resolveEnvironmentIndex(@Nonnull World world, int blockX, int blockY, int blockZ) {
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(blockX, blockZ);
-        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
-        if (chunkRef == null) {
-            return 0;
-        }
-        var worldChunk = world.getChunkStore().getStore().getComponent(chunkRef, WorldChunk.getComponentType());
-        if (worldChunk == null) {
-            return 0;
-        }
-        return worldChunk.getBlockChunk().getEnvironment(blockX, blockY, blockZ);
+        return ChunkSectionBlockUtil.environmentAt(world, blockX, blockY, blockZ, 0);
     }
 
     @Nonnull

@@ -1,16 +1,15 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.assetstore.map.AssetMapWithIndexes;
 import com.hypixel.hytale.builtin.weather.resources.WeatherResource;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.environment.config.Environment;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.worldgen.IWorldGen;
 import com.hypixel.hytale.server.core.asset.type.fluid.Fluid;
 import com.hypixel.hytale.server.core.universe.world.chunk.section.FluidSection;
@@ -432,16 +431,7 @@ public final class FishShadowSpawnHelper {
     }
 
     private static int resolveEnvironmentIndex(@Nonnull World world, int blockX, int blockY, int blockZ) {
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(blockX, blockZ);
-        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
-        if (chunkRef == null) {
-            return 0;
-        }
-        var worldChunk = world.getChunkStore().getStore().getComponent(chunkRef, WorldChunk.getComponentType());
-        if (worldChunk == null) {
-            return 0;
-        }
-        return worldChunk.getBlockChunk().getEnvironment(blockX, blockY, blockZ);
+        return ChunkSectionBlockUtil.environmentAt(world, blockX, blockY, blockZ, 0);
     }
 
     public static boolean matchesSpawnEnvironment(
@@ -857,11 +847,10 @@ public final class FishShadowSpawnHelper {
         if (FishFluidHelper.isFishableFluidAt(world, x, y, z)) {
             return false;
         }
-        WorldChunk chunk = world.getChunkIfLoaded(ChunkUtil.indexChunkFromBlock(x, z));
-        if (chunk == null) {
+        if (ChunkSectionBlockUtil.worldChunkIfTicking(world, x, z) == null) {
             return false;
         }
-        return chunk.getBlock(x, y, z) != BlockType.EMPTY_ID;
+        return ChunkSectionBlockUtil.blockId(world, x, y, z) != BlockType.EMPTY_ID;
     }
 
     private static boolean isWaterAt(@Nonnull World world, int x, int y, int z) {

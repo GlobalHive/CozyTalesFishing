@@ -15,7 +15,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
-import com.hypixel.hytale.server.npc.role.Role;
+import com.hypixel.hytale.server.npc.instructions.ExecutionSupport;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import com.hypixel.hytale.server.npc.systems.RoleChangeSystem;
 import com.hexvane.cozytalefishing.boat.npc.builders.BuilderActionCozyBoatMount;
@@ -46,26 +46,26 @@ public final class ActionCozyBoatMount extends ActionBase {
   @Override
   public boolean canExecute(
       @Nonnull Ref<EntityStore> ref,
-      @Nonnull Role role,
+      @Nonnull ExecutionSupport executionSupport,
       @Nullable InfoProvider sensorInfo,
       double dt,
       @Nonnull Store<EntityStore> store
   ) {
-    final var target = role.getStateSupport().getInteractionIterationTarget();
+    final var target = executionSupport.getStateSupport().getInteractionIterationTarget();
     final boolean targetExists =
         target != null && !store.getArchetype(target).contains(DeathComponent.getComponentType());
-    return super.canExecute(ref, role, sensorInfo, dt, store) && targetExists;
+    return super.canExecute(ref, executionSupport, sensorInfo, dt, store) && targetExists;
   }
 
   @Override
   public boolean execute(
       @Nonnull Ref<EntityStore> ref,
-      @Nonnull Role role,
+      @Nonnull ExecutionSupport executionSupport,
       @Nullable InfoProvider sensorInfo,
       double dt,
       @Nonnull Store<EntityStore> store
   ) {
-    super.execute(ref, role, sensorInfo, dt, store);
+    super.execute(ref, executionSupport, sensorInfo, dt, store);
 
     var mountComponentType = NPCMountComponent.getComponentType();
     if (store.getComponent(ref, mountComponentType) != null) {
@@ -73,9 +73,9 @@ public final class ActionCozyBoatMount extends ActionBase {
     }
 
     var mountComponent = store.ensureAndGetComponent(ref, mountComponentType);
-    mountComponent.setOriginalRoleIndex(NPCPlugin.get().getIndex(role.getRoleName()));
+    mountComponent.setOriginalRoleIndex(NPCPlugin.get().getIndex(executionSupport.getRole().getRoleName()));
 
-    final var playerReference = role.getStateSupport().getInteractionIterationTarget();
+    final var playerReference = executionSupport.getStateSupport().getInteractionIterationTarget();
     if (playerReference == null) {
       return false;
     }
@@ -98,7 +98,7 @@ public final class ActionCozyBoatMount extends ActionBase {
       return false;
     }
 
-    RoleChangeSystem.requestRoleChange(ref, role, mountedRoleIndex, false, null, null, store);
+    RoleChangeSystem.requestRoleChange(ref, executionSupport.getRole(), mountedRoleIndex, false, null, null, store);
 
     FishingBoatVelocityHelper.zeroVelocity(ref, store);
     FishingBoatVelocityHelper.zeroVelocity(playerReference, store);

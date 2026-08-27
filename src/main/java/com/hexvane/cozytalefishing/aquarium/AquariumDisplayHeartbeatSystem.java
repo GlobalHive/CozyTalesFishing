@@ -1,6 +1,7 @@
 package com.hexvane.cozytalefishing.aquarium;
 
 import com.hexvane.cozytalefishing.fish.AquariumSize;
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -13,8 +14,6 @@ import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.entity.reference.PersistentRef;
 import com.hypixel.hytale.server.core.modules.block.BlockModule;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public final class AquariumDisplayHeartbeatSystem extends EntityTickingSystem<Ch
     ) {
         AquariumBlock aquarium = archetypeChunk.getComponent(index, AquariumBlock.getComponentType());
         BlockModule.BlockStateInfo info = archetypeChunk.getComponent(index, BlockModule.BlockStateInfo.getComponentType());
-        if (aquarium == null || info == null || !info.getChunkRef().isValid()) {
+        if (aquarium == null || info == null || !info.getSectionRef().isValid()) {
             return;
         }
 
@@ -65,12 +64,10 @@ public final class AquariumDisplayHeartbeatSystem extends EntityTickingSystem<Ch
         var world = store.getExternalData().getWorld();
         Store<EntityStore> entityStore = world.getEntityStore().getStore();
 
-        var blockChunk = commandBuffer.getComponent(info.getChunkRef(), BlockChunk.getComponentType());
-        if (blockChunk == null) {
+        Vector3i origin = AquariumService.worldOriginFromBlockInfo(info, commandBuffer);
+        if (origin == null) {
             return;
         }
-
-        Vector3i origin = AquariumService.worldOriginFromBlockInfo(info, blockChunk);
 
         // Demolish left the AquariumBlock entity alive with no voxel → do not restore; remove so BreakSystem cleans up.
         if (!isLiveAquariumBlock(world, origin)) {
@@ -102,14 +99,13 @@ public final class AquariumDisplayHeartbeatSystem extends EntityTickingSystem<Ch
      * If the chunk is unloaded, assume live so we do not scrub during normal unload.
      */
     private static boolean isLiveAquariumBlock(@Nonnull World world, @Nonnull Vector3i origin) {
-        if (origin.y < 0 || origin.y >= ChunkUtil.HEIGHT) {
+        if (origin.y < ChunkUtil.MIN_Y || origin.y >= ChunkUtil.HEIGHT) {
             return false;
         }
-        WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(origin.x, origin.z));
-        if (chunk == null) {
+        if (!ChunkSectionBlockUtil.isChunkInMemory(world, origin.x, origin.z)) {
             return true;
         }
-        BlockType blockType = chunk.getBlockType(origin.x, origin.y, origin.z);
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, origin.x, origin.y, origin.z);
         return blockType != null && AquariumConstants.isAquariumBlockId(blockType.getId());
     }
 

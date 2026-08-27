@@ -6,6 +6,7 @@ import com.hexvane.cozytalefishing.fishing.FishingBootstrap;
 import com.hexvane.cozytalefishing.fish.FishBootstrap;
 import com.hexvane.cozytalefishing.boat.BoatBootstrap;
 import com.hexvane.cozytalefishing.aquarium.AquariumBootstrap;
+import com.hexvane.cozytalefishing.bench.CoralRecipeGating;
 import com.hexvane.cozytalefishing.bench.FishingBenchBootstrap;
 import com.hexvane.cozytalefishing.generated.HstatsBuildMetadata;
 import com.hypixel.hytale.assetstore.AssetPack;
@@ -81,6 +82,7 @@ public final class CozyTalesFishingPlugin extends JavaPlugin {
         FishingModConfig.bind(fishingModConfig.get());
         FishingSpawnRegionRegistry.initialize(getDataDirectory());
         CozyTalesFishingIntegration.setupIntegrations();
+        CoralRecipeGating.apply();
 
         if (!this.getManifest().includesAssetPack()) {
             return;
@@ -101,12 +103,15 @@ public final class CozyTalesFishingPlugin extends JavaPlugin {
         if (Universe.get().getPlayerCount() > 0) {
             Universe.get().broadcastPacketNoCache(new RequestCommonAssetsRebuild());
         }
+
+        CoralRecipeGating.apply();
     }
 
     /** Reloads {@code FishingModConfig.json} from disk and applies it without restarting. */
     public void reloadFishingModConfig() {
         fishingModConfig.load().join();
         FishingModConfig.bind(fishingModConfig.get());
+        CoralRecipeGating.apply();
         getLogger().atInfo().log("Reloaded FishingModConfig from %s", getDataDirectory().resolve("FishingModConfig.json"));
     }
 }

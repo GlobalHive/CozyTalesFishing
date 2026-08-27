@@ -311,6 +311,8 @@ public final class FishingModConfig {
             .add()
             .append(new KeyedCodec<>("BoatBreakHitsRequired", Codec.INTEGER), (a, v) -> a.boatBreakHitsRequired = v, a -> a.boatBreakHitsRequired)
             .add()
+            .append(new KeyedCodec<>("EnableCoralRecipes", Codec.BOOLEAN), (a, v) -> a.enableCoralRecipes = v, a -> a.enableCoralRecipes)
+            .add()
             .append(
                 new KeyedCodec<>("MmoLuckTreasureChancePerLuckPercent", Codec.DOUBLE),
                 (a, v) -> a.mmoLuckTreasureChancePerLuckPercent = v.floatValue(),
@@ -426,6 +428,7 @@ public final class FishingModConfig {
     private float boatSpeedMultiplier = 3.0f;
     private int boatPlacementMinWaterDepth = 1;
     private int boatBreakHitsRequired = 3;
+    private boolean enableCoralRecipes = true;
     /** Each 1% MMO Fishing Luck adds this much absolute treasure shadow chance (e.g. 0.001 → +1% at 10 luck). */
     private float mmoLuckTreasureChancePerLuckPercent = 0.001f;
     /** Per 1% Fishing Luck, chance for one extra journal fish on the same catch (capped by max extra). */
@@ -686,6 +689,10 @@ public final class FishingModConfig {
 
     public int getBoatBreakHitsRequired() {
         return boatBreakHitsRequired;
+    }
+
+    public boolean isEnableCoralRecipes() {
+        return enableCoralRecipes;
     }
 
     public float getMmoLuckTreasureChancePerLuckPercent() {

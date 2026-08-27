@@ -1,0 +1,9 @@
+# Reed Castwell Wintertide gift replies and incoming gift talk.
+# Keys must live in this bundle so Aetherhaven's Wintertide dialogue can find them.
+
+aetherhaven.dialogue.festival.wintertide.gift.fisherman.love=This is a Wintertide catch worth surviving a storm for. Thank you.
+aetherhaven.dialogue.festival.wintertide.gift.fisherman.like=A fine Wintertide gift. Feels like finding something useful in the drift.
+aetherhaven.dialogue.festival.wintertide.gift.fisherman.neutral=A Wintertide gift is still a gift. Castaways learn not to waste much.
+aetherhaven.dialogue.festival.wintertide.gift.fisherman.dislike=I will take it. Next Wintertide, think of the water, not the tide line junk.
+
+aetherhaven.dialogue.festival.wintertide.incoming.fisherman=I saved this from the wreck stores. Wintertide is for sharing what the tide still left me.

@@ -2,6 +2,7 @@ package com.hexvane.cozytalefishing.fish;
 
 
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hexvane.cozytalefishing.bobber.BobberEffects;
 import com.hexvane.cozytalefishing.fishing.FishingDebugLog;
 import com.hexvane.cozytalefishing.fishing.FishingRodRegistry;
@@ -363,27 +364,8 @@ public final class FishShadowSpawner {
 
 
     private static int resolveEnvironmentIndex(@Nonnull World world, @Nonnull FishShadowSpawnHelper.WaterColumn column) {
-
-        long chunkIndex = com.hypixel.hytale.math.util.ChunkUtil.indexChunkFromBlock(column.blockX(), column.blockZ());
-
-        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
-
-        if (chunkRef == null) {
-
-            return 0;
-
-        }
-
-        var worldChunk = world.getChunkStore().getStore().getComponent(chunkRef, com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk.getComponentType());
-
-        if (worldChunk == null) {
-
-            return 0;
-
-        }
-
-        return worldChunk.getBlockChunk().getEnvironment(column.blockX(), column.surfaceY(), column.blockZ());
-
+        return ChunkSectionBlockUtil.environmentAt(
+            world, column.blockX(), column.surfaceY(), column.blockZ(), 0);
     }
 
 

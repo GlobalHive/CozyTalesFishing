@@ -1,13 +1,12 @@
 package com.hexvane.cozytalefishing.boat;
 
-import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.Rotation;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.RotationTuple;
-import com.hypixel.hytale.server.core.universe.world.PlaceBlockSettings;
 import com.hypixel.hytale.server.core.universe.world.SetBlockSettings;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
+import com.hypixel.hytale.server.core.universe.world.chunk.BlockOperations;
 import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockSection;
 import com.hypixel.hytale.server.core.util.FillerBlockUtil;
 import javax.annotation.Nonnull;
@@ -18,7 +17,8 @@ public final class FishingBoatBlockHelper {
   private FishingBoatBlockHelper() {}
 
   public static boolean isPlacedBoatBlock(@Nonnull World world, @Nonnull Vector3i blockPos) {
-    return isPlacedBoatBlockId(world.getBlockType(blockPos.x, blockPos.y, blockPos.z).getId());
+    BlockType blockType = ChunkSectionBlockUtil.blockType(world, blockPos.x, blockPos.y, blockPos.z);
+    return blockType != null && isPlacedBoatBlockId(blockType.getId());
   }
 
   public static boolean isPlacedBoatBlockId(@Nonnull String blockId) {
@@ -37,7 +37,7 @@ public final class FishingBoatBlockHelper {
       return false;
     }
 
-    if (world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(x, z)) == null) {
+    if (!ChunkSectionBlockUtil.isChunkInMemory(world, x, z)) {
       return false;
     }
 
@@ -52,13 +52,21 @@ public final class FishingBoatBlockHelper {
       return false;
     }
 
-    WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(x, z));
-    if (chunk == null) {
+    BlockSection section = ChunkSectionBlockUtil.blockSectionAt(world, x, y, z);
+    if (section == null) {
       return false;
     }
 
     int rotationIndex = rotationIndexFromYaw(yawRadians);
-    return chunk.testPlaceBlock(x, y, z, blockType, rotationIndex);
+    return BlockOperations.testPlaceBlock(
+        world.getChunkStore().getStore(),
+        section,
+        x,
+        y,
+        z,
+        blockType,
+        rotationIndex
+    );
   }
 
   public static boolean placeParkedBoatBlock(
@@ -72,21 +80,25 @@ public final class FishingBoatBlockHelper {
       return false;
     }
 
-    WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(x, z));
-    if (chunk == null) {
+    BlockType blockType = BlockType.getAssetMap().getAsset(FishingBoatConstants.PLACED_BLOCK_ID);
+    if (blockType == null) {
+      return false;
+    }
+    int index = BlockType.getAssetMap().getIndex(FishingBoatConstants.PLACED_BLOCK_ID);
+    if (index < 0) {
       return false;
     }
 
-    RotationTuple rotationTuple = RotationTuple.get(rotationIndexFromYaw(yawRadians));
-    return chunk.placeBlock(
+    return ChunkSectionBlockUtil.setBlock(
+        world,
         x,
         y,
         z,
-        FishingBoatConstants.PLACED_BLOCK_ID,
-        rotationTuple.yaw(),
-        rotationTuple.pitch(),
-        rotationTuple.roll(),
-        PlaceBlockSettings.PERFORM_BLOCK_UPDATE
+        index,
+        blockType,
+        rotationIndexFromYaw(yawRadians),
+        FillerBlockUtil.NO_FILLER,
+        SetBlockSettings.PERFORM_BLOCK_UPDATE
     );
   }
 
@@ -96,46 +108,17 @@ public final class FishingBoatBlockHelper {
   }
 
   public static boolean removeBoatBlockKeepingWater(@Nonnull World world, int x, int y, int z) {
-    WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(x, z));
-    if (chunk == null) {
-      return false;
-    }
-
     int blockIndex = BlockType.getAssetMap().getIndex(FishingBoatConstants.PLACED_BLOCK_ID);
-    if (chunk.getBlock(x, y, z) != blockIndex) {
+    if (blockIndex < 0 || ChunkSectionBlockUtil.blockId(world, x, y, z) != blockIndex) {
       return false;
     }
 
-    chunk.setBlock(
-        x,
-        y,
-        z,
-        BlockType.EMPTY_ID,
-        BlockType.EMPTY,
-        RotationTuple.NONE_INDEX,
-        FillerBlockUtil.NO_FILLER,
-        SetBlockSettings.PERFORM_BLOCK_UPDATE
-    );
-    return true;
+    return ChunkSectionBlockUtil.setBlockEmpty(world, x, y, z, SetBlockSettings.PERFORM_BLOCK_UPDATE);
   }
 
   public static float yawFromBlockRotation(@Nonnull World world, @Nonnull Vector3i blockPos) {
-    int x = blockPos.x;
-    int y = blockPos.y;
-    int z = blockPos.z;
-    if (y < 0 || y >= ChunkUtil.HEIGHT) {
-      return 0.0f;
-    }
-    var sectionRef = world.getChunkStore().getChunkSectionReferenceAtBlock(x, y, z);
-    if (sectionRef == null) {
-      return 0.0f;
-    }
-    BlockSection blockSection =
-        world.getChunkStore().getStore().getComponent(sectionRef, BlockSection.getComponentType());
-    if (blockSection == null) {
-      return 0.0f;
-    }
-    return (float) RotationTuple.get(blockSection.getRotationIndex(x, y, z)).yaw().getRadians();
+    int rotationIndex = ChunkSectionBlockUtil.rotationIndex(world, blockPos.x, blockPos.y, blockPos.z);
+    return (float) RotationTuple.get(rotationIndex).yaw().getRadians();
   }
 
   public static int rotationIndexFromYaw(float yawRadians) {

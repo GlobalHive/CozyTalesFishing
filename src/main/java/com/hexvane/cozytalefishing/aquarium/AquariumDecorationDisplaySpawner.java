@@ -34,6 +34,12 @@ import org.joml.Vector3i;
 public final class AquariumDecorationDisplaySpawner {
     private static final float BLOCK_ENTITY_BASE_SCALE = 1.0f;
 
+    /**
+     * Update 6 places a BlockEntity model's visual center on the entity origin. Pre-U6 the center sat
+     * 0.5 blocks above it, which is how aquarium decoration spots were authored.
+     */
+    private static final double BLOCK_ENTITY_VISUAL_CENTER_Y = 0.5;
+
     private AquariumDecorationDisplaySpawner() {}
 
     @Nullable
@@ -53,9 +59,15 @@ public final class AquariumDecorationDisplaySpawner {
 
         float scale = decorationAsset.getDisplayScale();
         Rotation3f rotation = new Rotation3f(0.0f, yawRadians, 0.0f);
+        Vector3d spawnPosition = new Vector3d(position);
+        ModelAsset modelAsset = AquariumDisplayModelResolver.resolveModelAsset(item);
+        if (AquariumDisplayModelResolver.usesBlockEntityVisual(item)) {
+            spawnPosition.y += BLOCK_ENTITY_VISUAL_CENTER_Y;
+        }
+
         var holder = EntityStore.REGISTRY.newHolder();
         holder.addComponent(NetworkId.getComponentType(), new NetworkId(entityStore.getExternalData().takeNextNetworkId()));
-        holder.addComponent(TransformComponent.getComponentType(), new TransformComponent(new Vector3d(position), rotation));
+        holder.addComponent(TransformComponent.getComponentType(), new TransformComponent(spawnPosition, rotation));
         holder.addComponent(HeadRotation.getComponentType(), new HeadRotation(rotation));
         holder.addComponent(PropComponent.getComponentType(), PropComponent.get());
         holder.addComponent(Intangible.getComponentType(), Intangible.INSTANCE);
@@ -65,7 +77,6 @@ public final class AquariumDecorationDisplaySpawner {
         );
         holder.ensureComponent(UUIDComponent.getComponentType());
 
-        ModelAsset modelAsset = AquariumDisplayModelResolver.resolveModelAsset(item);
         if (modelAsset != null) {
             Model model = Model.createScaledModel(modelAsset, Math.max(0.01f, item.getScale() * scale));
             if (item.getTexture() != null && !item.getTexture().equals(model.getTexture())) {

@@ -1,5 +1,6 @@
 package com.hexvane.cozytalefishing.bobber;
 
+import com.hexvane.cozytalefishing.fishing.FishingRodRegistry;
 import com.hexvane.cozytalefishing.journal.CozyInteractiveCustomUIPage;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
@@ -21,6 +22,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class BobberEquipPage extends CozyInteractiveCustomUIPage<BobberEquipPage.PageData> {
     private static final String SLOT_ROW = "#SlotRow";
@@ -66,8 +68,8 @@ public final class BobberEquipPage extends CozyInteractiveCustomUIPage<BobberEqu
             templateAppended = true;
         }
 
-        ItemStack rodStack = rodContainer.getItemStack(rodSlot);
-        int slotCount = BobberLoadoutService.getSlotCount(rodStack.getItemId());
+        ItemStack rodStack = resolveLiveRod();
+        int slotCount = rodStack == null ? 0 : BobberLoadoutService.getSlotCount(rodStack.getItemId());
         boolean hasSlots = slotCount > 0;
         boolean showSlots = hasSlots && viewMode == ViewMode.SLOTS;
         boolean showPicker = hasSlots && viewMode == ViewMode.PICKER;
@@ -87,16 +89,21 @@ public final class BobberEquipPage extends CozyInteractiveCustomUIPage<BobberEqu
             Message.translation("server.cozytalefishing.bobber.no_slots")
         );
 
-        if (showSlots) {
+        if (showSlots && rodStack != null) {
             buildSlots(commandBuilder, eventBuilder, rodStack, slotCount);
         }
-        if (showPicker) {
+        if (showPicker && rodStack != null) {
             buildPicker(commandBuilder, eventBuilder, store, ref, rodStack);
         }
     }
 
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull PageData data) {
+        if (resolveLiveRod() == null) {
+            close();
+            return;
+        }
+
         if ("SelectSlot".equals(data.action)) {
             pickerSlotIndex = data.slotIndex;
             viewMode = ViewMode.PICKER;
@@ -298,7 +305,10 @@ public final class BobberEquipPage extends CozyInteractiveCustomUIPage<BobberEqu
         if (ItemStack.isEmpty(bobberStack) || !BobberRegistry.isBobber(bobberStack.getItemId())) {
             return;
         }
-        ItemStack rodStack = rodContainer.getItemStack(rodSlot);
+        ItemStack rodStack = resolveLiveRod();
+        if (rodStack == null) {
+            return;
+        }
         ItemContext rodContext = new ItemContext(rodContainer, rodSlot, rodStack);
         ItemContext bobberContext = new ItemContext(inventory, inventorySlot, bobberStack);
         BobberLoadoutService.equipBobber(store, ref, rodContext, pickerSlotIndex, bobberContext);
@@ -308,10 +318,22 @@ public final class BobberEquipPage extends CozyInteractiveCustomUIPage<BobberEqu
         if (pickerSlotIndex < 0 || !ref.isValid()) {
             return;
         }
-        ItemStack rodStack = rodContainer.getItemStack(rodSlot);
+        ItemStack rodStack = resolveLiveRod();
+        if (rodStack == null) {
+            return;
+        }
         ItemContext rodContext = new ItemContext(rodContainer, rodSlot, rodStack);
         ItemContainer inventory = InventoryComponent.getCombined(store, ref, InventoryComponent.EVERYTHING);
         BobberLoadoutService.clearSlot(store, ref, rodContext, pickerSlotIndex, inventory);
+    }
+
+    @Nullable
+    private ItemStack resolveLiveRod() {
+        ItemStack rodStack = rodContainer.getItemStack(rodSlot);
+        if (ItemStack.isEmpty(rodStack) || !FishingRodRegistry.isFishingRod(rodStack.getItemId())) {
+            return null;
+        }
+        return rodStack;
     }
 
     public static final class PageData {

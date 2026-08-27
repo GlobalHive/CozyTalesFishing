@@ -9,7 +9,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.server.core.modules.block.BlockModule;
-import com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.ArrayList;
@@ -65,10 +64,9 @@ public final class AquariumBreakSystem extends RefSystem<ChunkStore> {
 
         Vector3i origin = null;
         var info = commandBuffer.getComponent(ref, BlockModule.BlockStateInfo.getComponentType());
-        if (info != null && info.getChunkRef().isValid()) {
-            var blockChunk = commandBuffer.getComponent(info.getChunkRef(), BlockChunk.getComponentType());
-            if (blockChunk != null) {
-                origin = AquariumService.worldOriginFromBlockInfo(info, blockChunk);
+        if (info != null && info.getSectionRef().isValid()) {
+            origin = AquariumService.worldOriginFromBlockInfo(info, commandBuffer);
+            if (origin != null) {
                 if (aquarium.getAquariumSize() == null) {
                     AquariumSize atBlock = AquariumBlockHelper.aquariumSizeAt(world, origin);
                     if (atBlock != null) {

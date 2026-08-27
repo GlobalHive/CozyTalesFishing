@@ -5,9 +5,9 @@ import com.hexvane.cozytalefishing.fish.AquariumSize;
 import com.hexvane.cozytalefishing.fish.FishItemStackFactory;
 import com.hexvane.cozytalefishing.fish.FishSpeciesRegistry;
 import com.hypixel.hytale.component.AddReason;
+import com.hypixel.hytale.component.ComponentAccessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.block.BlockModule;
@@ -357,18 +357,15 @@ public final class AquariumService {
         return AquariumDisplayOffset.apply(withSpot, decorationAsset.getDisplayOffset(), rotationIndex);
     }
 
-    @Nonnull
+    @Nullable
     public static Vector3i worldOriginFromBlockInfo(
         @Nonnull BlockModule.BlockStateInfo info,
-        @Nonnull com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk blockChunk
+        @Nonnull ComponentAccessor<ChunkStore> accessor
     ) {
-        int localX = ChunkUtil.xFromBlockInColumn(info.getIndex());
-        int localY = ChunkUtil.yFromBlockInColumn(info.getIndex());
-        int localZ = ChunkUtil.zFromBlockInColumn(info.getIndex());
-        return new Vector3i(
-            ChunkUtil.worldCoordFromLocalCoord(blockChunk.getX(), localX),
-            localY,
-            ChunkUtil.worldCoordFromLocalCoord(blockChunk.getZ(), localZ)
-        );
+        Vector3i origin = new Vector3i();
+        if (!info.fillWorldPos(accessor, origin)) {
+            return null;
+        }
+        return origin;
     }
 }

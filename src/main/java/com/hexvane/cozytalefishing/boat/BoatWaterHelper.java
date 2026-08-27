@@ -2,6 +2,7 @@ package com.hexvane.cozytalefishing.boat;
 
 
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hexvane.cozytalefishing.fish.FishFluidHelper;
 
 import com.hexvane.cozytalefishing.fish.FishingModConfig;
@@ -172,7 +173,7 @@ public final class BoatWaterHelper {
 
   public static boolean isWaterTargetBlock(@Nonnull World world, @Nonnull Vector3i targetBlock) {
 
-    int blockId = world.getBlock(targetBlock.x, targetBlock.y, targetBlock.z);
+    int blockId = ChunkSectionBlockUtil.blockId(world, targetBlock.x, targetBlock.y, targetBlock.z);
 
     if (blockId != BlockType.EMPTY_ID) {
 

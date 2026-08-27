@@ -1,16 +1,16 @@
 package com.hexvane.cozytalefishing.aquarium;
 
 import com.hexvane.cozytalefishing.fish.AquariumSize;
-import com.hypixel.hytale.component.AddReason;
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.asset.type.blockhitbox.BlockBoundingBoxes;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.RotationTuple;
-import com.hypixel.hytale.server.core.modules.block.BlockModule;
+import com.hypixel.hytale.server.core.modules.block.BlockEntity;
+import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockComponentSection;
 import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockSection;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.util.FillerBlockUtil;
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public final class AquariumBlockHelper {
 
     @Nullable
     public static AquariumSize aquariumSizeAt(@Nonnull World world, @Nonnull Vector3i originBlock) {
-        BlockType blockType = world.getBlockType(originBlock.x, originBlock.y, originBlock.z);
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, originBlock.x, originBlock.y, originBlock.z);
         if (blockType == null) {
             return null;
         }
@@ -70,11 +70,11 @@ public final class AquariumBlockHelper {
 
     @Nonnull
     public static Vector3d displayPosition(@Nonnull World world, @Nonnull Vector3i originBlock, @Nonnull AquariumSize size) {
-        if (world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(originBlock.x, originBlock.z)) == null) {
+        if (!ChunkSectionBlockUtil.isChunkInMemory(world, originBlock.x, originBlock.z)) {
             return new Vector3d(originBlock.x + 0.5, originBlock.y + 0.45, originBlock.z + 0.5);
         }
 
-        BlockType blockType = world.getBlockType(originBlock.x, originBlock.y, originBlock.z);
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, originBlock.x, originBlock.y, originBlock.z);
         if (blockType == null) {
             return new Vector3d(originBlock.x + 0.5, originBlock.y + 0.45, originBlock.z + 0.5);
         }
@@ -116,7 +116,7 @@ public final class AquariumBlockHelper {
         @Nullable AquariumSize sizeFallback,
         @Nonnull FootprintConsumer consumer
     ) {
-        BlockType blockType = world.getBlockType(originBlock.x, originBlock.y, originBlock.z);
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, originBlock.x, originBlock.y, originBlock.z);
         if (blockType != null) {
             forEachFootprintForBlockType(world, originBlock, blockType, consumer);
             return;
@@ -190,33 +190,19 @@ public final class AquariumBlockHelper {
 
     @Nullable
     public static Ref<ChunkStore> blockEntityAtOrigin(@Nonnull World world, @Nonnull Vector3i originBlock) {
-        WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(originBlock.x, originBlock.z));
-        if (chunk == null) {
-            return null;
-        }
-        var blockRef = chunk.getBlockComponentEntity(originBlock.x, originBlock.y, originBlock.z);
+        var blockRef = ChunkSectionBlockUtil.blockEntityRefAt(world, originBlock.x, originBlock.y, originBlock.z);
         if (blockRef != null && blockRef.isValid()) {
             return blockRef;
         }
-        return ensureBlockEntityAt(chunk, originBlock.x, originBlock.y, originBlock.z);
+        return ensureBlockEntityAt(world, originBlock.x, originBlock.y, originBlock.z);
     }
 
     private static int rotationIndexAtBlock(@Nonnull World world, int x, int y, int z) {
-        if (y < 0 || y >= ChunkUtil.HEIGHT) {
-            return RotationTuple.NONE_INDEX;
-        }
-        BlockSection blockSection = blockSectionAtBlock(world, x, y, z);
-        if (blockSection == null) {
-            return RotationTuple.NONE_INDEX;
-        }
-        return blockSection.getRotationIndex(x, y, z);
+        return ChunkSectionBlockUtil.rotationIndex(world, x, y, z);
     }
 
     private static int fillerAt(@Nonnull World world, int x, int y, int z) {
-        if (y < 0 || y >= ChunkUtil.HEIGHT) {
-            return FillerBlockUtil.NO_FILLER;
-        }
-        BlockSection blockSection = blockSectionAtBlock(world, x, y, z);
+        BlockSection blockSection = ChunkSectionBlockUtil.blockSectionAt(world, x, y, z);
         if (blockSection == null) {
             return FillerBlockUtil.NO_FILLER;
         }
@@ -224,36 +210,35 @@ public final class AquariumBlockHelper {
     }
 
     @Nullable
-    private static BlockSection blockSectionAtBlock(@Nonnull World world, int x, int y, int z) {
-        var sectionRef = world.getChunkStore().getChunkSectionReferenceAtBlock(x, y, z);
+    private static Ref<ChunkStore> ensureBlockEntityAt(@Nonnull World world, int x, int y, int z) {
+        Ref<ChunkStore> sectionRef = ChunkSectionBlockUtil.sectionRefAt(world, x, y, z);
         if (sectionRef == null) {
             return null;
         }
-        return world.getChunkStore().getStore().getComponent(sectionRef, BlockSection.getComponentType());
-    }
 
-    @Nullable
-    private static Ref<ChunkStore> ensureBlockEntityAt(@Nonnull WorldChunk chunk, int x, int y, int z) {
-        var blockRef = chunk.getBlockComponentEntity(x, y, z);
-        if (blockRef != null) {
-            return blockRef;
-        }
-
-        if (fillerAt(chunk.getWorld(), x, y, z) != FillerBlockUtil.NO_FILLER) {
+        Store<ChunkStore> store = world.getChunkStore().getStore();
+        BlockSection blockSection = store.getComponent(sectionRef, BlockSection.getComponentType());
+        BlockComponentSection componentSection =
+            store.getComponent(sectionRef, BlockComponentSection.getComponentType());
+        if (blockSection == null || componentSection == null) {
             return null;
         }
 
-        BlockType blockType = chunk.getBlockType(x, y, z);
-        if (blockType == null || blockType.getBlockEntity() == null) {
+        BlockType blockType = ChunkSectionBlockUtil.blockType(world, x, y, z);
+        if (blockType == null) {
             return null;
         }
 
-        var data = blockType.getBlockEntity().clone();
-        data.putComponent(
-            BlockModule.BlockStateInfo.getComponentType(),
-            new BlockModule.BlockStateInfo(ChunkUtil.indexBlockInColumn(x, y, z), chunk.getReference())
+        return BlockEntity.ensureBlockEntity(
+            store,
+            sectionRef,
+            componentSection,
+            x,
+            y,
+            z,
+            blockType,
+            blockSection.getFiller(x, y, z)
         );
-        return chunk.getWorld().getChunkStore().getStore().addEntity(data, AddReason.SPAWN);
     }
 
     @FunctionalInterface

@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0] - 8/27/2026
+
+### Added
+
+- **Boat speed** — Server owners can change how fast fishing boats move in `FishingModConfig`.
+- **Coral and seaweed recipes** — Coral and seaweed crafting at the Fishing Bench can be turned off in `FishingModConfig`.
+- **Reed Castwell calendar** — Birthday on Summer 20, Wintertide gift lines, festival greetings for every Aetherhaven holiday, and a Wintertide present.
+
+### Changed
+
+- **Hytale Update 6** — Targets server `>=0.6.0-pre.0 <0.7.0` and rebuilds against the new protocol.
+- **Chunk and block APIs** — Boat place/remove, aquarium block entities, and fish spawn environment reads use section-based access instead of deprecated `World`/`WorldChunk` helpers.
+- **NPC boat mount** — Updated to the Update 6 `ExecutionSupport` NPC action API.
+- **Asset registration** — Custom fish and aquarium asset stores register through the plugin asset registry so they unload cleanly on plugin reload.
+
+### Fixed
+
+- **Aquarium decorations** — Block-item decorations sit on the tank floor again after Update 6 moved BlockEntity visual centers down by half a block.
+- **Bobber equip page** — Clicking a bobber slot after the fishing rod is moved or dropped no longer crashes the world tick.
+
 ## [1.2.0] - 7/27/2026
 
 ### Added

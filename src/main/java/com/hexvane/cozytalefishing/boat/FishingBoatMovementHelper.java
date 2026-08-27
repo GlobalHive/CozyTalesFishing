@@ -25,22 +25,14 @@ public final class FishingBoatMovementHelper {
       return;
     }
 
-    MovementSettings settings = scaledBoatMovementSettings(movementConfig.toPacket());
-    movementManager.setDefaultSettings(settings, physicsValues, gameMode);
+    movementManager.setDefaultSettings(movementConfig, physicsValues, gameMode);
+    MovementSettings settings = movementManager.getDefaultSettings();
+    float multiplier = FishingModConfig.get().getBoatSpeedMultiplier();
+    if (multiplier != 1.0f) {
+      settings.baseSpeed *= multiplier;
+      settings.acceleration = Math.min(1.0f, settings.acceleration * multiplier);
+    }
     movementManager.applyDefaultSettings();
     movementManager.update(packetHandler);
-  }
-
-  @Nonnull
-  public static MovementSettings scaledBoatMovementSettings(@Nonnull MovementSettings base) {
-    float multiplier = FishingModConfig.get().getBoatSpeedMultiplier();
-    if (multiplier == 1.0f) {
-      return new MovementSettings(base);
-    }
-
-    MovementSettings settings = new MovementSettings(base);
-    settings.baseSpeed *= multiplier;
-    settings.acceleration = Math.min(1.0f, settings.acceleration * multiplier);
-    return settings;
   }
 }

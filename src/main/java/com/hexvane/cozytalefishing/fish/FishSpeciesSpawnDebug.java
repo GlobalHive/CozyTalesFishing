@@ -1,14 +1,13 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hexvane.cozytalefishing.world.ChunkSectionBlockUtil;
 import com.hypixel.hytale.builtin.weather.components.WeatherTracker;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.Arrays;
 import java.util.Locale;
@@ -186,15 +185,6 @@ public final class FishSpeciesSpawnDebug {
     }
 
     private static int resolveEnvironmentIndex(@Nonnull World world, int blockX, int blockY, int blockZ) {
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(blockX, blockZ);
-        var chunkRef = world.getChunkStore().getChunkReference(chunkIndex);
-        if (chunkRef == null) {
-            return -1;
-        }
-        WorldChunk worldChunk = world.getChunkStore().getStore().getComponent(chunkRef, WorldChunk.getComponentType());
-        if (worldChunk == null) {
-            return -1;
-        }
-        return worldChunk.getBlockChunk().getEnvironment(blockX, blockY, blockZ);
+        return ChunkSectionBlockUtil.environmentAt(world, blockX, blockY, blockZ, -1);
     }
 }

@@ -411,6 +411,46 @@
           "next": "main_hub"
         }
       ]
+    },
+    "gift_love_birthday": {
+      "speaker": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.root.speaker",
+      "text": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.gift.love.birthday",
+      "choices": [
+        {
+          "text": "aetherhaven_dialogue_gift.aetherhaven.dialogue.gift.back",
+          "next": "main_hub"
+        }
+      ]
+    },
+    "gift_like_birthday": {
+      "speaker": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.root.speaker",
+      "text": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.gift.like.birthday",
+      "choices": [
+        {
+          "text": "aetherhaven_dialogue_gift.aetherhaven.dialogue.gift.back",
+          "next": "main_hub"
+        }
+      ]
+    },
+    "gift_neutral_birthday": {
+      "speaker": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.root.speaker",
+      "text": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.gift.neutral.birthday",
+      "choices": [
+        {
+          "text": "aetherhaven_dialogue_gift.aetherhaven.dialogue.gift.back",
+          "next": "main_hub"
+        }
+      ]
+    },
+    "gift_dislike_birthday": {
+      "speaker": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.root.speaker",
+      "text": "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.gift.dislike.birthday",
+      "choices": [
+        {
+          "text": "aetherhaven_dialogue_gift.aetherhaven.dialogue.gift.back",
+          "next": "main_hub"
+        }
+      ]
     }
   }
 }

@@ -83,5 +83,14 @@
     "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.main_hub.hint.love.1",
     "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.main_hub.hint.dislike.0",
     "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.main_hub.hint.dislike.1"
+  ],
+  "speechVoiceId": "low",
+  "birthdaySeason": "Summer",
+  "birthdayDay": 20,
+  "dialogueBirthdayGreetingLangKeys": [
+    "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.birthday.greeting"
+  ],
+  "wintertideGifts": [
+    { "itemId": "CozyFishing_Fish_Scale_Legendary", "count": 5 }
   ]
 }
