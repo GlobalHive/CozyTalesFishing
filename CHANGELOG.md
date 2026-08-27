@@ -4,6 +4,7 @@
 
 ### Added
 
+- **Stormwind Fishmonger** — Stormwind-style variant of the Fisherman's Shop for towns using the Stormwind building set.
 - **Boat speed** — Server owners can change how fast fishing boats move in `FishingModConfig`.
 - **Coral and seaweed recipes** — Coral and seaweed crafting at the Fishing Bench can be turned off in `FishingModConfig`.
 - **Reed Castwell calendar** — Birthday on Summer 20, Wintertide gift lines, festival greetings for every Aetherhaven holiday, and a Wintertide present.
