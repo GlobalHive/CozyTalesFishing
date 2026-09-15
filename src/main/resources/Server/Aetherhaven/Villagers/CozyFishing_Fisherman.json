@@ -84,7 +84,7 @@
     "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.main_hub.hint.dislike.0",
     "aetherhaven_dialogue_cozyfishing_fisherman.aetherhaven.dialogue.cozyfishing_fisherman.main_hub.hint.dislike.1"
   ],
-  "speechVoiceId": "low",
+  "speechVoiceId": "WarmMale",
   "birthdaySeason": "Summer",
   "birthdayDay": 20,
   "dialogueBirthdayGreetingLangKeys": [
