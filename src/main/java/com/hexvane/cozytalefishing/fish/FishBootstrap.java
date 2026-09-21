@@ -52,6 +52,7 @@ public final class FishBootstrap {
                 .build()
         );
 
+        SpecialFishingSpots.register(plugin.getEntityStoreRegistry());
         FishShadowComponent.register(plugin.getEntityStoreRegistry());
         FishCatchRecordComponent.register(plugin.getEntityStoreRegistry());
         FishShadowSpawnStateComponent.register(plugin.getEntityStoreRegistry());
@@ -76,6 +77,7 @@ public final class FishBootstrap {
             FishingJournalPage::new
         );
 
+        plugin.getEntityStoreRegistry().registerSystem(new SpecialFishingSpotSystem());
         plugin.getEntityStoreRegistry().registerSystem(new FishShadowSpawnSystem());
         plugin.getEntityStoreRegistry().registerSystem(new FishShadowTickSystem());
 

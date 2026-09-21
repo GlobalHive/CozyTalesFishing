@@ -3,6 +3,8 @@
     "Name": "server.items.Template_CozyFishing_MonsterCatch.name"
   },
   "Quality": "Template",
+  "Model": "NPC/FishShadow/FishShadow.blockymodel",
+  "Texture": "NPC/FishShadow/FishShadow_Large.png",
   "Categories": [
     "Items.Tools",
     "CozyTalesFishing.Items"

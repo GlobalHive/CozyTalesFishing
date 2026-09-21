@@ -8,9 +8,23 @@ import javax.annotation.Nullable;
 
 /** Runtime mod configuration loaded from the plugin data directory. */
 public final class FishingModConfig {
+    private boolean specialSpotsEnabled = true;
+    private double specialSpotSpawnChance = 0.12;
+    private double specialSpotCheckIntervalSeconds = 30;
+    private double specialSpotLifetimeSeconds = 600;
+
+    public boolean isSpecialSpotsEnabled() { return specialSpotsEnabled; }
+    public double getSpecialSpotSpawnChance() { return Double.isFinite(specialSpotSpawnChance) ? Math.clamp(specialSpotSpawnChance, 0, 1) : 0.12; }
+    public double getSpecialSpotCheckIntervalSeconds() { return Double.isFinite(specialSpotCheckIntervalSeconds) ? Math.max(5, specialSpotCheckIntervalSeconds) : 30; }
+    public double getSpecialSpotLifetimeSeconds() { return Double.isFinite(specialSpotLifetimeSeconds) ? Math.max(30, specialSpotLifetimeSeconds) : 600; }
+
     @Nonnull
     public static final BuilderCodec<FishingModConfig> CODEC =
         BuilderCodec.builder(FishingModConfig.class, FishingModConfig::new)
+            .append(new KeyedCodec<>("SpecialSpotsEnabled", Codec.BOOLEAN), (a, v) -> a.specialSpotsEnabled = v, a -> a.specialSpotsEnabled).add()
+            .append(new KeyedCodec<>("SpecialSpotSpawnChance", Codec.DOUBLE), (a, v) -> a.specialSpotSpawnChance = v, a -> a.specialSpotSpawnChance).add()
+            .append(new KeyedCodec<>("SpecialSpotCheckIntervalSeconds", Codec.DOUBLE), (a, v) -> a.specialSpotCheckIntervalSeconds = v, a -> a.specialSpotCheckIntervalSeconds).add()
+            .append(new KeyedCodec<>("SpecialSpotLifetimeSeconds", Codec.DOUBLE), (a, v) -> a.specialSpotLifetimeSeconds = v, a -> a.specialSpotLifetimeSeconds).add()
             .append(new KeyedCodec<>("ShadowsPerPlayerCap", Codec.INTEGER), (a, v) -> a.shadowsPerPlayerCap = v, a -> a.shadowsPerPlayerCap)
             .add()
             .append(

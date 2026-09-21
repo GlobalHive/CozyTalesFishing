@@ -8,7 +8,7 @@
     "CozyTalesFishing.Items"
   ],
   "Model": "Items/Fishing/FishScale.blockymodel",
-  "Texture": "Items/Fishing/FishScale_Common.png",
+  "Texture": "Items/Fishing/FishingSmallItems_Atlas.png",
   "Quality": "Common",
   "ItemLevel": 5,
   "PlayerAnimationsId": "Item",

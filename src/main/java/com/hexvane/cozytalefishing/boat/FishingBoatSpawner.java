@@ -24,7 +24,8 @@ import org.joml.Vector3d;
 /** Shared fishing boat entity spawn and programmatic mount helpers. */
 public final class FishingBoatSpawner {
   private static final float MOUNT_ANCHOR_X = 0.0f;
-  private static final float MOUNT_ANCHOR_Y = 1.0f;
+  // Keep in sync with CozyFishing_Boat.json and the mounted hull's model offset.
+  private static final float MOUNT_ANCHOR_Y = 1.5f;
   private static final float MOUNT_ANCHOR_Z = 0.3f;
 
   private FishingBoatSpawner() {}

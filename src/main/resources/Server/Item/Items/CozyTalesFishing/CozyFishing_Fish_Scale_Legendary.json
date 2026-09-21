@@ -7,8 +7,8 @@
     "Items.Ingredients",
     "CozyTalesFishing.Items"
   ],
-  "Model": "Items/Fishing/FishScale.blockymodel",
-  "Texture": "Items/Fishing/FishScale_Legendary.png",
+  "Model": "Items/Fishing/FishScale_Legendary.blockymodel",
+  "Texture": "Items/Fishing/FishingSmallItems_Atlas.png",
   "Quality": "Legendary",
   "ItemLevel": 40,
   "PlayerAnimationsId": "Item",

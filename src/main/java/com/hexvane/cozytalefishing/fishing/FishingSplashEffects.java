@@ -50,6 +50,10 @@ public final class FishingSplashEffects {
         spawnParticles(entityAccessor, ripplePos, particleId);
     }
 
+    public static void playSpecialSpotSparkles(ComponentAccessor<EntityStore> accessor, Vector3d position) {
+        spawnParticles(accessor, position, "CozyFishing_SpecialSpot_Sparkles_System");
+    }
+
     private static void spawnParticles(
         @Nonnull ComponentAccessor<EntityStore> entityAccessor,
         @Nonnull Vector3d position,

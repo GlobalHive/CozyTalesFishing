@@ -71,6 +71,17 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
 
         World world = store.getExternalData().getWorld();
 
+        if (shadow.getSpecialSpotId() != null
+            && commandBuffer.getResource(SpecialFishingSpots.getResourceType()).active(shadow.getSpecialSpotId()) == null) {
+            Ref<EntityStore> owner = findPlayerRef(shadow.getHookedPlayerUuid());
+            if (owner != null && owner.getStore() == store) {
+                FishingLineService.recallCastOut(commandBuffer, owner);
+            }
+            clearBobberTarget(commandBuffer, shadowRef, shadow);
+            FishShadowEntityPool.despawn(commandBuffer, shadowRef);
+            return;
+        }
+
         FishSpeciesAsset species = FishSpeciesRegistry.getSpecies(shadow.getSpeciesId());
         if (species == null) {
             FishShadowEntityPool.despawn(commandBuffer, shadowRef);
@@ -82,6 +93,15 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
         }
 
         Vector3d position = new Vector3d(transform.getPosition());
+
+        SpecialFishingSpot home = shadow.getSpecialSpotId() == null ? null
+            : commandBuffer.getResource(SpecialFishingSpots.getResourceType()).active(shadow.getSpecialSpotId());
+        if (home != null && (shadow.getState() == FishShadowState.WANDERING || shadow.getState() == FishShadowState.POKING
+                || shadow.getState() == FishShadowState.ALERT)
+            && SpecialFishingSpotMovement.distanceSquared(position, home.center) > SpecialFishingSpot.RADIUS * SpecialFishingSpot.RADIUS) {
+            clearBobberTarget(commandBuffer, shadowRef, shadow);
+            shadow.setState(FishShadowState.WANDERING);
+        }
 
         switch (shadow.getState()) {
             case WANDERING -> tickWandering(commandBuffer, shadowRef, shadow, species, world, position, dt);
@@ -113,13 +133,13 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
         @Nonnull Vector3d position,
         float dt
     ) {
-        if (tryFleeFromNearbyPlayer(commandBuffer, shadowRef, shadow, species, world, position)) {
+        if (shadow.getSpecialSpotId() == null && tryFleeFromNearbyPlayer(commandBuffer, shadowRef, shadow, species, world, position)) {
             return;
         }
 
         FishingModConfig config = FishingModConfig.get();
         float idleDespawnSeconds = config.getShadowIdleDespawnSeconds();
-        if (idleDespawnSeconds > 0.0f) {
+        if (shadow.getSpecialSpotId() == null && idleDespawnSeconds > 0.0f) {
             if (FishShadowProximity.hasRodHolderNear(commandBuffer, position, config.getSpawnRadiusMax())) {
                 shadow.setIdleTimer(0.0f);
             } else {
@@ -132,7 +152,11 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
             }
         }
 
-        Ref<EntityStore> bobberRef = findBobberInVision(commandBuffer, shadowRef, shadow, species, position);
+        SpecialFishingSpot spot = shadow.getSpecialSpotId() == null ? null
+            : commandBuffer.getResource(SpecialFishingSpots.getResourceType()).active(shadow.getSpecialSpotId());
+        boolean atHome = spot == null || SpecialFishingSpotMovement.distanceSquared(position, spot.center)
+            <= SpecialFishingSpot.RADIUS * SpecialFishingSpot.RADIUS;
+        Ref<EntityStore> bobberRef = atHome ? findBobberInVision(commandBuffer, shadowRef, shadow, species, position) : null;
         if (bobberRef != null && beginPokeSequence(commandBuffer, shadowRef, shadow, bobberRef)) {
             Vector3d bobberPos = getBobberPosition(commandBuffer, bobberRef);
             float yaw = FishShadowVision.swimYaw(
@@ -149,6 +173,15 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
             shadow.setWanderTimer(3.0f + (float) Math.random() * 5.0f);
         }
 
+        if (spot != null) {
+            float yaw = SpecialFishingSpotMovement.move(position, spot.center, shadow.getWanderDirection(),
+                species.getSwimSpeed() * dt, (candidate, dx, dz) -> FishShadowSpawnHelper.tryMoveOnFluidSurface(
+                    world, candidate, dx, dz, FishFluidHelper.columnFluidForShadow(shadow)));
+            if (yaw != shadow.getWanderDirection()) shadow.setWanderTimer(1.0f);
+            shadow.setWanderDirection(yaw);
+            FishShadowEntityPool.updateTransform(commandBuffer, shadowRef, position, yaw, shadow.getCurrentScale());
+            return;
+        }
         float speed = species.getSwimSpeed() * dt;
         if (!FishShadowSpawnHelper.tryMoveOnFluidSurface(world, position, Math.sin(shadow.getWanderDirection()) * speed, Math.cos(shadow.getWanderDirection()) * speed, FishFluidHelper.columnFluidForShadow(shadow))) {
             shadow.setWanderDirection((float) (Math.random() * Math.PI * 2.0));
@@ -1015,6 +1048,8 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
         @Nonnull Vector3d position
     ) {
         AtomicReference<Ref<EntityStore>> holder = new AtomicReference<>();
+        SpecialFishingSpot spot = shadow.getSpecialSpotId() == null ? null
+            : commandBuffer.getResource(SpecialFishingSpots.getResourceType()).active(shadow.getSpecialSpotId());
         commandBuffer.getStore().forEachEntityParallel(
             FishingBobberComponent.getComponentType(),
             (idx, chunk, ignored) -> {
@@ -1031,11 +1066,13 @@ public final class FishShadowTickSystem extends EntityTickingSystem<EntityStore>
                     return;
                 }
                 Vector3d bobberPos = bobberTransform.getPosition();
+                if (spot != null && SpecialFishingSpotMovement.distanceSquared(bobberPos, spot.center)
+                    > SpecialFishingSpot.RADIUS * SpecialFishingSpot.RADIUS) return;
                 float visionRange = resolveBobberVisionRange(commandBuffer, species, bobber);
                 if (
                     FishShadowVision.isInHorizontalCone(
                         position,
-                        shadow.getWanderDirection(),
+                        -shadow.getWanderDirection(),
                         bobberPos,
                         visionRange,
                         species.getVisionAngleDegrees() * 0.5f

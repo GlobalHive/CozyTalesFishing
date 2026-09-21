@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.0] - 9/21/2026
+
+### Added
+
+- **Special fishing spots** Sparkling fishing spots with four to six catches, rarer fish, and better chances of treasure and messages in bottles. Spots can appear without holding a rod.
+
+### Changed
+
+- **Boat water clearance** Raised boat hulls to improve clearance above the water.
+
+### Fixed
+
+- **Stray Line Entities** Fixed issue where the fishing line didn't get fully cleaned up.
+- **Texture sizes** Corrected texture sizes that caused client warnings.
+- **Item templates** Fixed missing model warnings for bobber and monster catch templates.
+- **Fisherman shop quest** Reed gives a fishing shop plot token matching the town building style instead of a blueprint.
+
+### Fixed
 ## [1.3.0] - 8/27/2026
 
 ### Added

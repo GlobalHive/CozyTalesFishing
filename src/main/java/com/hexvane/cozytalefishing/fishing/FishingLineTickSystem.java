@@ -366,6 +366,12 @@ public final class FishingLineTickSystem extends EntityTickingSystem<EntityStore
             return;
         }
 
+        if (!com.hexvane.cozytalefishing.fish.SpecialFishingSpots.canCatch(commandBuffer, shadow)) {
+            FishShadowEntityPool.despawn(commandBuffer, shadowRef);
+            FishingLineService.recallCastOut(commandBuffer, playerRef);
+            return;
+        }
+
         FishSpeciesAsset species = FishSpeciesRegistry.getSpecies(shadow.getSpeciesId());
         if (species == null) {
             FishingLineService.recallCastOut(commandBuffer, playerRef);

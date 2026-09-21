@@ -1,5 +1,5 @@
 {
-  "Model": "Items/Vehicles/Boat.blockymodel",
+  "Model": "Items/Fishing/CozyFishing_Boat_Mounted.blockymodel",
   "Texture": "Items/Vehicles/Boat_Texture.png",
   "EyeHeight": 1,
   "HitBox": {

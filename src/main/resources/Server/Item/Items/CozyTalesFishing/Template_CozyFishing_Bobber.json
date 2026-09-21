@@ -4,6 +4,8 @@
     "Description": "server.items.CozyFishing_Bobber.description"
   },
   "Quality": "Template",
+  "Model": "Items/Fishing/QualityBobber.blockymodel",
+  "Texture": "Items/Fishing/QualityBobber.png",
   "Categories": [
     "Items.Tools",
     "CozyTalesFishing.Items"

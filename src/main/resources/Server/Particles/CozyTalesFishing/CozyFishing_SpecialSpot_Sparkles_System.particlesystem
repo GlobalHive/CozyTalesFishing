@@ -1,0 +1,8 @@
+{
+  "Spawners": [
+    {
+      "SpawnerId": "CozyFishing_SpecialSpot_Sparkles",
+      "FixedRotation": true
+    }
+  ]
+}

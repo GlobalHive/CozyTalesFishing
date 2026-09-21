@@ -37,3 +37,29 @@ This mod works on its own. If you also run **Aetherhaven**, you get extra conten
 - Extra rewards from sunken treasure, such as gold coins and the occasional piece of jewelry
 
 Aetherhaven is not required. Install it alongside Cozy Tales: Fishing only if you want that integration.
+
+
+### Special fishing spots
+
+Sparkling schools can appear in loaded water near any player, including players without a rod equipped. Each spot spawns **4–6 fish total**, shared by everyone. Caught or escaped fish are not replaced. Wandering spot fish stay near the sparkles and do not despawn just because nobody is holding a rod.
+
+Schools use the normal biome, region, time, and weather eligibility rules. Relative fish weights are multiplied by 0.35 / 1 / 3 / 5 / 8 for Common through Legendary. Treasure rolls (including messages in bottles) use the larger of 15% or three times the configured normal treasure chance, capped at 100%; ordinary trash and monster rolls are skipped.
+
+A spot disappears when its supply is caught or lost, after ten minutes, when its water is removed, or after 45 seconds with no player within 80 blocks. Its remaining fish are removed too, including hooked fish; active fights are released. Spots are transient and do not survive world unload/restart.
+
+`FishingModConfig.json` settings (defaults also apply to existing configs missing these fields):
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `SpecialSpotsEnabled` | `true` | Enable natural special spots. |
+| `SpecialSpotSpawnChance` | `0.12` | Chance per eligible player per check. |
+| `SpecialSpotCheckIntervalSeconds` | `30` | Seconds between checks; minimum 5. |
+| `SpecialSpotLifetimeSeconds` | `600` | Maximum spot lifetime; minimum 30. |
+
+For frequent test spawns, set `SpecialSpotSpawnChance` to `1.0` and `SpecialSpotCheckIntervalSeconds` to `5.0`. This attempts a spot every five seconds when there is suitable water and no nearby active spot. Use `/cozyfish reloadconfig` or restart the server to apply changes. The normal defaults remain 0.12 and 30 seconds.
+
+Candidates are 12–40 blocks from a player, require a water patch at least two blocks deep, and stay at least 64 blocks from other spots. At most eight spots can be active per world. Client playtesting should check sparkle visibility, catching the final fish, leaving/revisiting a spot, two players fishing together, and expiry during a fight.
+
+### Boat hull clearance
+
+The boat uses mod-scoped variants of the game's boat model. The mounted hull is raised 27 model units at scale 2, with a 1.5 block mount anchor. The parked hull retains its two model unit clearance adjustment. The mounted floor now sits 0.1875 blocks higher relative to the rider than the earlier 16 unit hull with its 1.0 block anchor. This follows the raised-model approach found in Boats 2.0.2; no water blocks are removed. Riding, turning, parking, and dismounting need a client visual check because server builds cannot validate water rendering or rider alignment.

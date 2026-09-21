@@ -38,6 +38,14 @@ public final class FishShadowComponent implements Component<EntityStore> {
     @Nullable
     private String columnFluidAssetId;
 
+    @Nullable
+    private UUID specialSpotId;
+
+    @Nullable
+    public UUID getSpecialSpotId() { return specialSpotId; }
+
+    public void setSpecialSpotId(@Nullable UUID id) { specialSpotId = id; }
+
     private int pokeCountRemaining;
     private int pokeTotal;
     private float pokeTimer;
@@ -265,6 +273,7 @@ public final class FishShadowComponent implements Component<EntityStore> {
     @Override
     public Component<EntityStore> clone() {
         FishShadowComponent copy = new FishShadowComponent();
+        copy.specialSpotId = specialSpotId;
         copy.speciesId = speciesId;
         copy.shadowType = shadowType;
         copy.state = state;

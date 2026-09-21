@@ -29,10 +29,10 @@ aetherhaven.dialogue.cozyfishing_fisherman.reed_quest_shop.body=I washed up with
 aetherhaven.dialogue.cozyfishing_fisherman.reed_quest_shop.c0=We will get your shop built.
 aetherhaven.dialogue.cozyfishing_fisherman.reed_quest_shop.c1=Not right now. I need a bit more time.
 
-aetherhaven.dialogue.cozyfishing_fisherman.reed_shop_accepted.body=Here are my shop plans. Study them at the town planning desk, craft a plot token when you are ready, and stake the shop where folks can find the water. I will wait at the inn with whatever gear survived the wreck until the door is real.
+aetherhaven.dialogue.cozyfishing_fisherman.reed_shop_accepted.body=Here is a shop plot token that matches our town building style. Place it where folks can find the water, then bring the materials to build the shop. I will wait at the inn with whatever gear survived the wreck until the door is real.
 aetherhaven.dialogue.cozyfishing_fisherman.reed_shop_accepted.c0=See you when the shelves are up.
 
-aetherhaven.dialogue.cozyfishing_fisherman.reed_building.body=I keep watching the shoreline like I am waiting for a sail that will never come. Have you learned the plans and started the build yet, or should I stop counting on a shop that might not happen?
+aetherhaven.dialogue.cozyfishing_fisherman.reed_building.body=I keep watching the shoreline like I am waiting for a sail that will never come. Have you placed the shop plot token and started building yet, or should I stop counting on a shop that might not happen?
 aetherhaven.dialogue.cozyfishing_fisherman.reed_building.c0=I need to drop the quest for now.
 aetherhaven.dialogue.cozyfishing_fisherman.reed_building.c1=I am still working on it and I will keep going.
 

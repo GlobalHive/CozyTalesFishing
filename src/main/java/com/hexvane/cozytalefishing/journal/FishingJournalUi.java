@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 
 public final class FishingJournalUi {
     private static final Value<String> DEFAULT_TEXT_TOOLTIP_STYLE = Value.ref("Common.ui", "DefaultTextTooltipStyle");
-    /** Matches vanilla ingredient/quality slot 9-slice border (@2x 148px textures). */
+    /** Original nine-slice borders are preserved in the power-of-two @2x textures. */
     private static final int QUALITY_SLOT_BORDER = 24;
     /** Custom UI paths resolve from the Custom root, not common-asset UI/ prefixes. */
     private static final String QUALITY_SLOT_UI_ROOT = "CozyTalesFishing/ItemQualities/Slots/";

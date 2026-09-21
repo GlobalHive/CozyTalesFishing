@@ -11,7 +11,7 @@
     "Material": "Solid",
     "DrawType": "Model",
     "Opacity": "Transparent",
-    "CustomModel": "Items/Vehicles/Boat.blockymodel",
+    "CustomModel": "Items/Fishing/CozyFishing_Boat_Parked.blockymodel",
     "CustomModelTexture": [
       {
         "Texture": "Items/Vehicles/Boat_Texture.png",

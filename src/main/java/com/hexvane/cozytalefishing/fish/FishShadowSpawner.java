@@ -38,6 +38,43 @@ public final class FishShadowSpawner {
 
     private FishShadowSpawner() {}
 
+    record SpecialSpotSelection(FishSpeciesAsset species, WaterBodyType bodyType) {}
+
+    /** Uses the same location/time/weather rules as ordinary fish, with improved rarity weights. */
+    @Nullable
+    static SpecialSpotSelection pickSpecialSpotSpecies(World world, FishShadowSpawnHelper.WaterColumn column, FishingModConfig config) {
+        int environment = resolveEnvironmentIndex(world, column);
+        WaterBodyType body = FishShadowSpawnHelper.classifyWaterBodyForColumn(world, column,
+            new WaterBodyClassifier.Context(config.getMaxFloodFillsPerSpawnCheck()), environment);
+        FishingSpawnRegionContext region = FishingSpawnRegionRegistry.resolve(world.getWorldConfig().getUuid(),
+            column.blockX(), column.surfaceY(), column.blockZ());
+        if (region != null && region.getWaterBodyOverride() != null) body = region.getWaterBodyOverride();
+        List<WeightedSpecies> eligible = filterSpecies(body, column.blockX(), column.blockZ(), column.surfaceY(),
+            environment, world, config, region, null);
+        if (eligible.isEmpty()) return null;
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (random.nextDouble() < Math.min(1.0, Math.max(0.15, config.getTreasureSpawnChance() * 3.0))) {
+            FishSpeciesAsset treasure = pickTreasure(body, config, random);
+            if (treasure != null) return new SpecialSpotSelection(treasure, body);
+        }
+        List<WeightedSpecies> boosted = new ArrayList<>();
+        for (WeightedSpecies entry : eligible) {
+            boosted.add(new WeightedSpecies(entry.species(), entry.weightMultiplier() * specialSpotRarityBoost(entry.species().getRarity())));
+        }
+        FishSpeciesAsset species = weightedPick(boosted, config.getGlobalSpawnWeightMultiplier(), random);
+        return species == null ? null : new SpecialSpotSelection(species, body);
+    }
+
+    static float specialSpotRarityBoost(FishRarity rarity) {
+        return switch (rarity) {
+            case Common -> 0.35f;
+            case Uncommon -> 1.0f;
+            case Rare -> 3.0f;
+            case Epic -> 5.0f;
+            case Legendary -> 8.0f;
+        };
+    }
+
 
 
     public static boolean trySpawnNearPlayer(

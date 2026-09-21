@@ -29,7 +29,7 @@
     "Reference": "Component_Instruction_Interaction_CozyFishing_Boat_Mount",
     "Modify": {
       "AnchorX": 0,
-      "AnchorY": 1.0,
+      "AnchorY": 1.5,
       "AnchorZ": 0.3,
       "MovementConfig": "CozyFishing_Boat_Mount"
     }

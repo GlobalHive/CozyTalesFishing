@@ -1,6 +1,6 @@
 {
   "Model": "Items/Fishing/StringSegment.blockymodel",
-  "Texture": "Items/Fishing/StringSegment.png",
+  "Texture": "Items/Fishing/FishingSmallItems_Atlas.png",
   "HitBox": {
     "Min": {
       "X": -0.02,

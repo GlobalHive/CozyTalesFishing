@@ -95,6 +95,10 @@ public final class FishCatchService {
             return;
         }
 
+        if (shadow != null && shadow.getSpecialSpotId() != null) {
+            commandBuffer.getResource(SpecialFishingSpots.getResourceType()).caught(shadow);
+        }
+
         ItemStack stack = FishItemStackFactory.forSpecies(species);
         Player.giveItem(stack, playerRef, commandBuffer);
 
