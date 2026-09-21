@@ -42,6 +42,7 @@ public final class SegmentEntityPool {
     @Nullable
     public static Ref<EntityStore> spawnSegment(
         @Nonnull CommandBuffer<EntityStore> commandBuffer,
+        @Nonnull Ref<EntityStore> ownerRef,
         @Nonnull Vector3d position,
         @Nonnull Rotation3f rotation,
         int segmentIndex
@@ -51,7 +52,10 @@ public final class SegmentEntityPool {
             position,
             rotation,
             segmentIndex,
-            holder -> commandBuffer.addEntity(holder, AddReason.SPAWN)
+            holder -> {
+                holder.addComponent(FishingLineSegmentOwner.getComponentType(), new FishingLineSegmentOwner(ownerRef, segmentIndex));
+                return commandBuffer.addEntity(holder, AddReason.SPAWN);
+            }
         );
     }
 
@@ -76,6 +80,8 @@ public final class SegmentEntityPool {
 
         Model model = Model.createUnitScaleModel(modelAsset);
         var holder = EntityStore.REGISTRY.newHolder();
+        // Rope visuals belong to a live cast; never restore them from a world save.
+        holder.ensureComponent(EntityStore.REGISTRY.getNonSerializedComponentType());
         holder.addComponent(NetworkId.getComponentType(), new NetworkId(networkId));
         holder.addComponent(TransformComponent.getComponentType(), new TransformComponent(position, rotation));
         holder.addComponent(ModelComponent.getComponentType(), new ModelComponent(model));
@@ -123,8 +129,10 @@ public final class SegmentEntityPool {
     }
 
     public static void despawnSegment(@Nonnull CommandBuffer<EntityStore> commandBuffer, @Nullable Ref<EntityStore> segmentRef) {
-        if (segmentRef != null && segmentRef.isValid()) {
-            commandBuffer.removeEntity(segmentRef, RemoveReason.REMOVE);
+        if (segmentRef != null) {
+            // A queued spawn still has an invalid ref here. Test validity when the buffer
+            // executes, after the spawn, and tolerate another cleanup removing it first.
+            commandBuffer.tryRemoveEntity(segmentRef, RemoveReason.REMOVE);
         }
     }
 
@@ -145,7 +153,7 @@ public final class SegmentEntityPool {
         int removed = 0;
         for (Ref<EntityStore> segmentRef : line.getSegmentRefs()) {
             if (segmentRef != null) {
-                commandBuffer.removeEntity(segmentRef, RemoveReason.REMOVE);
+                commandBuffer.tryRemoveEntity(segmentRef, RemoveReason.REMOVE);
                 removed++;
             }
         }

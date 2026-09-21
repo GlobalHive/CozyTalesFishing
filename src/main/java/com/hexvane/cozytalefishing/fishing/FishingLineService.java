@@ -85,15 +85,18 @@ public final class FishingLineService {
             return;
         }
 
+        if (line.isActive() || line.isCastSetupPending()) {
+            // Capture and remove the rope before reset discards its references, even when
+            // the bobber has already disappeared and hasCastOut() is false.
+            teardownLine(commandBuffer, playerRef);
+            return;
+        }
+
         FishingReelHold.cancelActiveReelInteraction(commandBuffer, playerRef);
 
         boolean changed = false;
         if (line.isReeling()) {
             line.setReeling(false);
-            changed = true;
-        }
-        if (line.isActive() || line.isCastSetupPending()) {
-            line.reset();
             changed = true;
         }
 
@@ -114,6 +117,15 @@ public final class FishingLineService {
         if (!hasCastOut(commandBuffer, playerRef)) {
             return false;
         }
+
+        queueTeardown(commandBuffer, playerRef);
+        return true;
+    }
+
+    private static void queueTeardown(
+        @Nonnull CommandBuffer<EntityStore> commandBuffer,
+        @Nonnull Ref<EntityStore> playerRef
+    ) {
 
         FishingReelHold.cancelActiveReelInteraction(commandBuffer, playerRef);
 
@@ -136,8 +148,6 @@ public final class FishingLineService {
             commandBuffer.putComponent(playerRef, FishingLineComponent.getComponentType(), line);
         }
 
-        sanitizeStaleLineState(commandBuffer, playerRef);
-
         Ref<EntityStore> deferredPlayerRef = playerRef;
         Ref<EntityStore> deferredHookedShadow = hookedShadowRef;
         commandBuffer.run(
@@ -152,7 +162,6 @@ public final class FishingLineService {
                 )
         );
         FishingDebugLog.info("Recall scheduled");
-        return true;
     }
 
     public static void cancelActiveReelInteraction(
@@ -204,12 +213,6 @@ public final class FishingLineService {
 
         if (hookedShadowRef != null && hookedShadowRef.isValid()) {
             store.removeEntity(hookedShadowRef, RemoveReason.REMOVE);
-        }
-
-        FishingLineComponent line = store.getComponent(playerRef, FishingLineComponent.getComponentType());
-        if (line != null && line.isActive()) {
-            line.reset();
-            store.putComponent(playerRef, FishingLineComponent.getComponentType(), line);
         }
 
         FishingDebugLog.info(
@@ -465,7 +468,7 @@ public final class FishingLineService {
         @Nonnull CommandBuffer<EntityStore> commandBuffer,
         @Nonnull Ref<EntityStore> playerRef
     ) {
-        recallCastOut(commandBuffer, playerRef);
+        queueTeardown(commandBuffer, playerRef);
     }
 
     private static boolean removeAllOwnedBobbers(@Nonnull Store<EntityStore> store, @Nonnull UUID ownerUuid) {
@@ -549,7 +552,7 @@ public final class FishingLineService {
 
             Ref<EntityStore> segmentRef = segmentRefs[i];
             if (segmentRef == null || !segmentRef.isValid()) {
-                segmentRef = SegmentEntityPool.spawnSegment(commandBuffer, position, rotation, i);
+                segmentRef = SegmentEntityPool.spawnSegment(commandBuffer, playerRef, position, rotation, i);
                 segmentRefs[i] = segmentRef;
                 continue;
             }

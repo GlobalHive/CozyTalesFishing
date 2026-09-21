@@ -21,6 +21,7 @@ public final class FishingBootstrap {
         FishingLineComponent.register(plugin.getEntityStoreRegistry());
         FishingRodHoldComponent.register(plugin.getEntityStoreRegistry());
         FishingBobberComponent.register(plugin.getEntityStoreRegistry());
+        FishingLineSegmentOwner.register(plugin.getEntityStoreRegistry());
 
         plugin
             .getCodecRegistry(Interaction.CODEC)
@@ -54,6 +55,8 @@ public final class FishingBootstrap {
 
         plugin.getEntityStoreRegistry().registerSystem(new FishingRodHoldTickSystem());
         plugin.getEntityStoreRegistry().registerSystem(new FishingLineTickSystem());
+        plugin.getEntityStoreRegistry().registerSystem(new FishingLineRemovalSystem());
+        plugin.getEntityStoreRegistry().registerSystem(new FishingLineSegmentCleanupSystem());
         plugin.getEntityStoreRegistry().registerSystem(new FishingBobberFloatSystem());
 
         plugin.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, FishingBootstrap::onPlayerDisconnect);
