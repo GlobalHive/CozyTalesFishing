@@ -138,7 +138,7 @@ public final class FishFluidHelper {
         var pos = look.getPosition();
         var dir = look.getDirection();
         return TargetUtil.getTargetBlock(
-            world,
+            world.getChunkStore(),
             (blockId, fluidId) -> {
                 if (blockId != BlockType.EMPTY_ID) {
                     return true;

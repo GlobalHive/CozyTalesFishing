@@ -83,7 +83,7 @@ public abstract class CozyInteractiveCustomUIPage<T> extends InteractiveCustomUI
                     return;
                 }
                 playerComponent.getPageManager()
-                    .updateCustomPage(
+                    .updateLegacyCustomPage(
                         new CustomPage(
                             this.getClass().getName(),
                             false,

@@ -99,7 +99,7 @@ public final class AquariumDisplayHeartbeatSystem extends EntityTickingSystem<Ch
      * If the chunk is unloaded, assume live so we do not scrub during normal unload.
      */
     private static boolean isLiveAquariumBlock(@Nonnull World world, @Nonnull Vector3i origin) {
-        if (origin.y < ChunkUtil.MIN_Y || origin.y >= ChunkUtil.HEIGHT) {
+        if (origin.y < ChunkUtil.MIN_Y) {
             return false;
         }
         if (!ChunkSectionBlockUtil.isChunkInMemory(world, origin.x, origin.z)) {

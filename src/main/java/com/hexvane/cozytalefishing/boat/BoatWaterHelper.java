@@ -207,7 +207,7 @@ public final class BoatWaterHelper {
 
     return TargetUtil.getTargetBlock(
 
-        world,
+        world.getChunkStore(),
 
         (blockId, fluidId) -> {
 
