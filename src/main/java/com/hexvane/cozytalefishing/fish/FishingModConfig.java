@@ -13,6 +13,10 @@ public final class FishingModConfig {
     private double specialSpotCheckIntervalSeconds = 30;
     private double specialSpotLifetimeSeconds = 600;
 
+    /** With QuestLinesClaims installed, aquariums inside a claim follow the claim's permissions. */
+    private boolean claimsIntegration = true;
+
+    public boolean isClaimsIntegration() { return claimsIntegration; }
     public boolean isSpecialSpotsEnabled() { return specialSpotsEnabled; }
     public double getSpecialSpotSpawnChance() { return Double.isFinite(specialSpotSpawnChance) ? Math.clamp(specialSpotSpawnChance, 0, 1) : 0.12; }
     public double getSpecialSpotCheckIntervalSeconds() { return Double.isFinite(specialSpotCheckIntervalSeconds) ? Math.max(5, specialSpotCheckIntervalSeconds) : 30; }
@@ -21,6 +25,7 @@ public final class FishingModConfig {
     @Nonnull
     public static final BuilderCodec<FishingModConfig> CODEC =
         BuilderCodec.builder(FishingModConfig.class, FishingModConfig::new)
+            .append(new KeyedCodec<>("ClaimsIntegration", Codec.BOOLEAN), (a, v) -> a.claimsIntegration = v, a -> a.claimsIntegration).add()
             .append(new KeyedCodec<>("SpecialSpotsEnabled", Codec.BOOLEAN), (a, v) -> a.specialSpotsEnabled = v, a -> a.specialSpotsEnabled).add()
             .append(new KeyedCodec<>("SpecialSpotSpawnChance", Codec.DOUBLE), (a, v) -> a.specialSpotSpawnChance = v, a -> a.specialSpotSpawnChance).add()
             .append(new KeyedCodec<>("SpecialSpotCheckIntervalSeconds", Codec.DOUBLE), (a, v) -> a.specialSpotCheckIntervalSeconds = v, a -> a.specialSpotCheckIntervalSeconds).add()

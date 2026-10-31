@@ -1,5 +1,6 @@
 package com.hexvane.cozytalefishing.fish;
 
+import com.hexvane.cozytalefishing.fishing.FishingEntityIndex;
 import com.hypixel.hytale.builtin.weather.components.WeatherTracker;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -131,23 +132,23 @@ public final class FishShadowSpawnSystem extends EntityTickingSystem<EntityStore
             return 0;
         }
         Vector3d pos = transform.getPosition();
-        int[] count = {0};
+        int count = 0;
         double radiusSq = radius * radius;
-        store.forEachEntityParallel(
-            FishShadowComponent.getComponentType(),
-            (idx, chunk, ignored) -> {
-                TransformComponent shadowTransform = chunk.getComponent(idx, TransformComponent.getComponentType());
-                if (shadowTransform == null) {
-                    return;
-                }
-                Vector3d shadowPos = shadowTransform.getPosition();
-                double dx = shadowPos.x - pos.x;
-                double dz = shadowPos.z - pos.z;
-                if (dx * dx + dz * dz <= radiusSq) {
-                    count[0]++;
-                }
+        for (Ref<EntityStore> shadowRef : FishingEntityIndex.get(store).getShadows()) {
+            if (!shadowRef.isValid()) {
+                continue;
             }
-        );
-        return count[0];
+            TransformComponent shadowTransform = store.getComponent(shadowRef, TransformComponent.getComponentType());
+            if (shadowTransform == null) {
+                continue;
+            }
+            Vector3d shadowPos = shadowTransform.getPosition();
+            double dx = shadowPos.x - pos.x;
+            double dz = shadowPos.z - pos.z;
+            if (dx * dx + dz * dz <= radiusSq) {
+                count++;
+            }
+        }
+        return count;
     }
 }

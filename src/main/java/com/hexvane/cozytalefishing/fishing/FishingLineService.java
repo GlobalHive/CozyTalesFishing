@@ -3,6 +3,7 @@ package com.hexvane.cozytalefishing.fishing;
 import com.hexvane.cozytalefishing.bobber.BobberLoadoutService;
 import com.hexvane.cozytalefishing.bobber.BobberVisualService;
 import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.ComponentAccessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
@@ -19,7 +20,6 @@ import com.hypixel.hytale.server.core.modules.projectile.config.StandardPhysicsP
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.joml.Vector3d;
@@ -223,29 +223,20 @@ public final class FishingLineService {
     }
 
     @Nullable
-    public static Ref<EntityStore> findBobberForOwner(@Nonnull Store<EntityStore> store, @Nonnull UUID ownerUuid) {
-        AtomicReference<Ref<EntityStore>> found = new AtomicReference<>();
-        store.forEachEntityParallel(
-            FishingBobberComponent.getComponentType(),
-            (index, chunk, ignored) -> {
-                if (found.get() != null) {
-                    return;
-                }
-                FishingBobberComponent bobber = chunk.getComponent(index, FishingBobberComponent.getComponentType());
-                if (bobber != null && ownerUuid.equals(bobber.getOwnerUuid())) {
-                    found.set(chunk.getReferenceTo(index));
-                }
-            }
-        );
-        return found.get();
-    }
-
-    @Nullable
     public static Ref<EntityStore> findBobberForOwner(
-        @Nonnull CommandBuffer<EntityStore> commandBuffer,
+        @Nonnull ComponentAccessor<EntityStore> accessor,
         @Nonnull UUID ownerUuid
     ) {
-        return findBobberForOwner(commandBuffer.getStore(), ownerUuid);
+        for (Ref<EntityStore> bobberRef : FishingEntityIndex.get(accessor).getBobbers()) {
+            if (!bobberRef.isValid()) {
+                continue;
+            }
+            FishingBobberComponent bobber = accessor.getComponent(bobberRef, FishingBobberComponent.getComponentType());
+            if (bobber != null && ownerUuid.equals(bobber.getOwnerUuid())) {
+                return bobberRef;
+            }
+        }
+        return null;
     }
 
     @Nullable

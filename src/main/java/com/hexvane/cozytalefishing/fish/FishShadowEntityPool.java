@@ -51,6 +51,7 @@ public final class FishShadowEntityPool {
         holder.addComponent(HeadRotation.getComponentType(), new HeadRotation(rotation));
         holder.addComponent(PropComponent.getComponentType(), PropComponent.get());
         holder.addComponent(Intangible.getComponentType(), Intangible.INSTANCE);
+        holder.ensureComponent(EntityStore.REGISTRY.getNonSerializedComponentType());
         holder.ensureComponent(UUIDComponent.getComponentType());
 
         FishShadowComponent shadow = new FishShadowComponent();
@@ -99,6 +100,7 @@ public final class FishShadowEntityPool {
         holder.addComponent(HeadRotation.getComponentType(), new HeadRotation(rotation));
         holder.addComponent(PropComponent.getComponentType(), PropComponent.get());
         holder.addComponent(Intangible.getComponentType(), Intangible.INSTANCE);
+        holder.ensureComponent(EntityStore.REGISTRY.getNonSerializedComponentType());
         holder.ensureComponent(UUIDComponent.getComponentType());
 
         FishShadowComponent shadow = new FishShadowComponent();

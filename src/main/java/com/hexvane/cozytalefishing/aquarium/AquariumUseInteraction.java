@@ -1,5 +1,6 @@
 package com.hexvane.cozytalefishing.aquarium;
 
+import com.hexvane.cozytalefishing.compat.claims.Claims;
 import com.hexvane.cozytalefishing.fish.AquariumSize;
 import com.hexvane.cozytalefishing.fish.FishItemStackFactory;
 import com.hexvane.cozytalefishing.fish.FishSpeciesAsset;
@@ -67,6 +68,12 @@ public final class AquariumUseInteraction extends SimpleBlockInteraction {
 
         Ref<EntityStore> playerRef = context.getEntity();
         PlayerRef player = commandBuffer.getComponent(playerRef, PlayerRef.getComponentType());
+
+        if (player != null && !Claims.mayUseAquarium(player.getUuid(), world.getName(), origin.x, origin.y, origin.z)) {
+            send(player, "server.cozytalefishing.aquarium.claim_denied");
+            context.getState().state = InteractionState.Failed;
+            return;
+        }
 
         if (itemInHand == null || itemInHand.isEmpty()) {
             removeContents(context, commandBuffer, playerRef, player, chunkStore, blockRef, aquarium, origin, aquariumSize);

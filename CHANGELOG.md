@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.1] - 10/31/2026
+
+### Added
+
+- **Land claims** With QuestLines Claims installed, only the claim owner and players the claim trusts with containers can add to or take from an aquarium in a claim. Turn it off with `ClaimsIntegration` in the config.
+
+### Fixed
+
+- **World crash** Fixed a crash that could stop the world with a "Store is currently processing!" error.
+- **Fish shadows** Fish shadows are no longer saved with the world.
+
 ## [1.5.0] - 10/12/2026
 
 ### Changed

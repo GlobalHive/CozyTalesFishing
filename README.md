@@ -38,6 +38,10 @@ This mod works on its own. If you also run **Aetherhaven**, you get extra conten
 
 Aetherhaven is not required. Install it alongside Cozy Tales: Fishing only if you want that integration.
 
+## Optional: QuestLines Claims
+
+If you run **QuestLines Claims**, aquariums inside a claim follow the claim. The claim owner and players the claim trusts with containers can add to and take from them; everyone else is refused. Set `ClaimsIntegration` to `false` in `FishingModConfig.json` to turn this off.
+
 
 ### Special fishing spots
 

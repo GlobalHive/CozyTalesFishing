@@ -22,6 +22,9 @@ public final class FishingBootstrap {
         FishingRodHoldComponent.register(plugin.getEntityStoreRegistry());
         FishingBobberComponent.register(plugin.getEntityStoreRegistry());
         FishingLineSegmentOwner.register(plugin.getEntityStoreRegistry());
+        FishingEntityIndex.register(plugin.getEntityStoreRegistry());
+        plugin.getEntityStoreRegistry().registerSystem(new FishingEntityIndex.BobberEntitySystem());
+        plugin.getEntityStoreRegistry().registerSystem(new FishingEntityIndex.BobberComponentSystem());
 
         plugin
             .getCodecRegistry(Interaction.CODEC)

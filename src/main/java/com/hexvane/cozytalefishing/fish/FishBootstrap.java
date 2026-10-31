@@ -4,6 +4,7 @@ import com.hexvane.cozytalefishing.CozyTalesFishingPlugin;
 import com.hexvane.cozytalefishing.fishing.FishingReelInteraction;
 import com.hexvane.cozytalefishing.treasure.OpenMessageInBottleInteraction;
 import com.hexvane.cozytalefishing.treasure.OpenSunkenTreasureInteraction;
+import com.hexvane.cozytalefishing.fishing.FishingEntityIndex;
 import com.hypixel.hytale.assetstore.event.LoadedAssetsEvent;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
@@ -54,6 +55,7 @@ public final class FishBootstrap {
 
         SpecialFishingSpots.register(plugin.getEntityStoreRegistry());
         FishShadowComponent.register(plugin.getEntityStoreRegistry());
+        plugin.getEntityStoreRegistry().registerSystem(new FishingEntityIndex.ShadowEntitySystem());
         FishCatchRecordComponent.register(plugin.getEntityStoreRegistry());
         FishShadowSpawnStateComponent.register(plugin.getEntityStoreRegistry());
 

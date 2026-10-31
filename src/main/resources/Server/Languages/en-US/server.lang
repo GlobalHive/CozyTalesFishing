@@ -202,6 +202,7 @@ cozytalefishing.aquarium.fish_added = Fish placed in aquarium.
 cozytalefishing.aquarium.fish_removed = Fish removed from aquarium.
 cozytalefishing.aquarium.already_occupied = This aquarium already holds a fish.
 cozytalefishing.aquarium.empty = This aquarium is empty.
+cozytalefishing.aquarium.claim_denied = This aquarium is in a claim you are not part of.
 cozytalefishing.aquarium.fish_too_large = This fish needs a larger aquarium.
 cozytalefishing.aquarium.aquarium_too_large = This aquarium is too large for this fish.
 cozytalefishing.aquarium.not_a_fish = Only fish items can be placed in an aquarium.
