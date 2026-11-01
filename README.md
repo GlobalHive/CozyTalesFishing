@@ -82,7 +82,7 @@ It remains connected as entities move; movement does not replace the beam.
 `FishingLineBeamOffsetX`, `FishingLineBeamOffsetY`, and `FishingLineBeamOffsetZ`
 set the target offset in attachment-local block units. They default to X=0.0,
 Y=1.75, Z=0.05; to adjust them in-game, edit the config and run
-`/cozyfish reloadconfig`. Both camera views share the same offset.
+`/cozyfish reloadconfig`. One shared offset is used, calibrated for third-person rendering.
 `FishingLineBeamWidth` defaults to `0.10`. `FishingLineBeamTargetNode` defaults to
 `"R-Attachment"`; legacy empty or `"Tip"` values automatically resolve to that node.
 Settings changes replace only this line's beam. Bobber removal removes the beam.

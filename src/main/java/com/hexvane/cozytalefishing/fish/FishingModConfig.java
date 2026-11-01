@@ -15,7 +15,6 @@ public final class FishingModConfig {
     private double fishingLineBeamOffsetX = 0;
     private double fishingLineBeamOffsetY = 1.75;
     private double fishingLineBeamOffsetZ = 0.05;
-
     public float getFishingLineBeamOffsetX() { return beamOffset(fishingLineBeamOffsetX); }
     public float getFishingLineBeamOffsetY() { return beamOffset(fishingLineBeamOffsetY); }
     public float getFishingLineBeamOffsetZ() { return beamOffset(fishingLineBeamOffsetZ); }
