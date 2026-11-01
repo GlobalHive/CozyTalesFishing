@@ -1,5 +1,6 @@
 package com.hexvane.cozytalefishing.fishing;
 
+import com.hypixel.hytale.builtin.beam.AttachedBeam;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
@@ -239,7 +240,15 @@ public final class FishingLineComponent implements Component<EntityStore> {
         return segmentRefs;
     }
 
+    // Runtime-only ownership of our beam; do not clear other systems' beams.
+    AttachedBeam fishingBeam;
+    Ref<EntityStore> fishingBeamOwner;
+    String missingBeamAsset;
+
     public void reset() {
+        fishingBeam = null;
+        fishingBeamOwner = null;
+        missingBeamAsset = null;
         phase = FishingLinePhase.INACTIVE;
         chargeNormalized = 0.0f;
         maxLength = 0.0f;
@@ -286,6 +295,9 @@ public final class FishingLineComponent implements Component<EntityStore> {
             copy.nodeOldPositions[i].set(nodeOldPositions[i]);
         }
         System.arraycopy(segmentRefs, 0, copy.segmentRefs, 0, segmentRefs.length);
+        copy.fishingBeam = fishingBeam;
+        copy.fishingBeamOwner = fishingBeamOwner;
+        copy.missingBeamAsset = missingBeamAsset;
         return copy;
     }
 }

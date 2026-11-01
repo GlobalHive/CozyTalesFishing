@@ -1,5 +1,8 @@
 package com.hexvane.cozytalefishing.fishing;
 
+import java.util.Arrays;
+import com.hexvane.cozytalefishing.fish.FishingModConfig;
+
 import com.hexvane.cozytalefishing.bobber.BobberLoadoutService;
 import com.hexvane.cozytalefishing.bobber.BobberVisualService;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -486,6 +489,13 @@ public final class FishingLineService {
         @Nonnull Ref<EntityStore> playerRef,
         @Nonnull FishingLineComponent line
     ) {
+        if (FishingModConfig.get().isFishingLineBeamEnabled()) {
+            SegmentEntityPool.despawnAll(commandBuffer, line);
+            Arrays.fill(line.getSegmentRefs(), null);
+            FishingLineBeamRenderer.update(commandBuffer, playerRef, line);
+            return;
+        }
+        FishingLineBeamRenderer.remove(commandBuffer, line);
         Vector3d[] nodes = line.getNodePositions();
         Ref<EntityStore>[] segmentRefs = line.getSegmentRefs();
         Vector3d dir = new Vector3d();

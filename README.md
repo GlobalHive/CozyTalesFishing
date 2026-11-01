@@ -67,3 +67,25 @@ Candidates are 12–40 blocks from a player, require a water patch at least two 
 ### Boat hull clearance
 
 The boat uses mod-scoped variants of the game's boat model. The mounted hull is raised 27 model units at scale 2, with a 1.5 block mount anchor. The parked hull retains its two model unit clearance adjustment. The mounted floor now sits 0.1875 blocks higher relative to the rider than the earlier 16 unit hull with its 1.0 block anchor. This follows the raised-model approach found in Boats 2.0.2; no water blocks are removed. Riding, turning, parking, and dismounting need a client visual check because server builds cannot validate water rendering or rider alignment.
+
+### Fishing line beam renderer (Update 7)
+
+`FishingModConfig.json` supports `FishingLineBeamEnabled` (default `false`) and
+`FishingLineBeamAsset` (default `"Rope"`, a built-in game Beam asset ID, without `.json`).
+Set the toggle to `true` to draw only a thin native beam, or `false` to draw only the
+original segmented line. `/cozyfish reloadconfig` also switches active casts on their
+next visual update. Unknown/empty beam IDs log a warning and draw no line in beam
+mode; they never enable the segmented renderer as a fallback.
+
+The beam is owned by the bobber and targets the player's animated `R-Attachment`.
+It remains connected as entities move; movement does not replace the beam.
+`FishingLineBeamOffsetX`, `FishingLineBeamOffsetY`, and `FishingLineBeamOffsetZ`
+set the target offset in attachment-local block units. They default to X=0.0,
+Y=1.75, Z=0.05; to adjust them in-game, edit the config and run
+`/cozyfish reloadconfig`. Both camera views share the same offset.
+`FishingLineBeamWidth` defaults to `0.10`. `FishingLineBeamTargetNode` defaults to
+`"R-Attachment"`; legacy empty or `"Tip"` values automatically resolve to that node.
+Settings changes replace only this line's beam. Bobber removal removes the beam.
+This renders a straight line; the existing fishing simulation remains unchanged.
+Check attachment alignment in first/third person, while reeling, and while mounted
+in a client; server builds cannot validate rendered attachment positions.

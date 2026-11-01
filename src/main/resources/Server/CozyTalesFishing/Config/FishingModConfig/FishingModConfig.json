@@ -1,4 +1,11 @@
 {
+  "FishingLineBeamEnabled": false,
+  "FishingLineBeamAsset": "Rope",
+  "FishingLineBeamWidth": 0.10,
+  "FishingLineBeamTargetNode": "R-Attachment",
+  "FishingLineBeamOffsetX": 0.0,
+  "FishingLineBeamOffsetY": 1.75,
+  "FishingLineBeamOffsetZ": 0.05,
   "ShadowsPerPlayerCap": 4,
   "GlobalSpawnWeightMultiplier": 0.8,
   "SpawnCheckIntervalSeconds": 8,

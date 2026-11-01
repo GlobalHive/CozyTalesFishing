@@ -8,6 +8,37 @@ import javax.annotation.Nullable;
 
 /** Runtime mod configuration loaded from the plugin data directory. */
 public final class FishingModConfig {
+    private boolean fishingLineBeamEnabled = false;
+    private String fishingLineBeamAsset = "Rope";
+    private double fishingLineBeamWidth = 0.10;
+    private String fishingLineBeamTargetNode = "R-Attachment";
+    private double fishingLineBeamOffsetX = 0;
+    private double fishingLineBeamOffsetY = 1.75;
+    private double fishingLineBeamOffsetZ = 0.05;
+
+    public float getFishingLineBeamOffsetX() { return beamOffset(fishingLineBeamOffsetX); }
+    public float getFishingLineBeamOffsetY() { return beamOffset(fishingLineBeamOffsetY); }
+    public float getFishingLineBeamOffsetZ() { return beamOffset(fishingLineBeamOffsetZ); }
+    private static float beamOffset(double value) {
+        return Double.isFinite(value) ? (float) Math.clamp(value, -32, 32) : 0f;
+    }
+
+    public float getFishingLineBeamWidth() {
+        return Double.isFinite(fishingLineBeamWidth) && fishingLineBeamWidth > 0
+            ? (float) Math.clamp(fishingLineBeamWidth, 0.005, 2.0) : 0.10f;
+    }
+    public String getFishingLineBeamTargetNode() {
+        // Migrate the unsupported held-item Tip node from the previous build.
+        if (fishingLineBeamTargetNode == null || fishingLineBeamTargetNode.isBlank()
+            || "Tip".equalsIgnoreCase(fishingLineBeamTargetNode.trim())) return "R-Attachment";
+        return fishingLineBeamTargetNode.trim();
+    }
+
+    public boolean isFishingLineBeamEnabled() { return fishingLineBeamEnabled; }
+    public String getFishingLineBeamAsset() {
+        return fishingLineBeamAsset == null ? "" : fishingLineBeamAsset.trim();
+    }
+
     private boolean specialSpotsEnabled = true;
     private double specialSpotSpawnChance = 0.12;
     private double specialSpotCheckIntervalSeconds = 30;
@@ -25,6 +56,13 @@ public final class FishingModConfig {
     @Nonnull
     public static final BuilderCodec<FishingModConfig> CODEC =
         BuilderCodec.builder(FishingModConfig.class, FishingModConfig::new)
+            .append(new KeyedCodec<>("FishingLineBeamOffsetX", Codec.DOUBLE), (a, v) -> a.fishingLineBeamOffsetX = v, a -> a.fishingLineBeamOffsetX).add()
+            .append(new KeyedCodec<>("FishingLineBeamOffsetY", Codec.DOUBLE), (a, v) -> a.fishingLineBeamOffsetY = v, a -> a.fishingLineBeamOffsetY).add()
+            .append(new KeyedCodec<>("FishingLineBeamOffsetZ", Codec.DOUBLE), (a, v) -> a.fishingLineBeamOffsetZ = v, a -> a.fishingLineBeamOffsetZ).add()
+            .append(new KeyedCodec<>("FishingLineBeamWidth", Codec.DOUBLE), (a, v) -> a.fishingLineBeamWidth = v, a -> a.fishingLineBeamWidth).add()
+            .append(new KeyedCodec<>("FishingLineBeamTargetNode", Codec.STRING), (a, v) -> a.fishingLineBeamTargetNode = v, a -> a.fishingLineBeamTargetNode).add()
+            .append(new KeyedCodec<>("FishingLineBeamEnabled", Codec.BOOLEAN), (a, v) -> a.fishingLineBeamEnabled = v, a -> a.fishingLineBeamEnabled).add()
+            .append(new KeyedCodec<>("FishingLineBeamAsset", Codec.STRING), (a, v) -> a.fishingLineBeamAsset = v, a -> a.fishingLineBeamAsset).add()
             .append(new KeyedCodec<>("ClaimsIntegration", Codec.BOOLEAN), (a, v) -> a.claimsIntegration = v, a -> a.claimsIntegration).add()
             .append(new KeyedCodec<>("SpecialSpotsEnabled", Codec.BOOLEAN), (a, v) -> a.specialSpotsEnabled = v, a -> a.specialSpotsEnabled).add()
             .append(new KeyedCodec<>("SpecialSpotSpawnChance", Codec.DOUBLE), (a, v) -> a.specialSpotSpawnChance = v, a -> a.specialSpotSpawnChance).add()
